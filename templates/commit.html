@@ -1,0 +1,65 @@
+{% extends "repo_base.html" %}
+{% block repo_content %}
+<div class="commitdate">{{ commit.commit_time|strftime("%b %d, %Y") }}</div>
+<div class="commit">
+<div class="commitmsg">
+<img class="gravatar" src="{{ commit.author.email|gravatar(36) }}" />
+<a href="{{ url_for('commit', repo=repo.name, ref=commit.hex) }}">{{ commit.message|shortmsg }}</a>
+{{ commit.message|longmsg }}
+{% if commit.parents %}
+<table>
+<tr>
+<td style="vertical-align: top; padding-right: 2em;">Parent commit{% if commit.parents|length > 1%}s{% endif %}</td>
+<td>
+{% for parent in commit.parents %}
+<a href="{{ url_for('commit', repo=repo.name, ref=parent.hex) }}">{{ parent.hex[:7] }}</a> {{ parent.message|shortmsg }}<br />
+{% endfor %}
+</td>
+</tr></table>
+{% endif %}
+<div class="commitdata">
+<span class="author">{{ commit.author.name }} authored {{ commit.author.time|humantime }}</span>
+{% if commit.committer.email != commit.author.email %}
+<br /><span class="committer">{{ commit.committer.name }} committed {{ commit.committer.time|humantime }}</span>
+{% endif %}
+</div>
+</div>
+</div>
+<div class="diffstat">
+
+</div>
+<div class="diff">
+<h2>
+    Showing {{ diff.changes['files']|length }} changed file{% if diff.changes['files']|length != 1 %}s{% endif %}
+    ({{ stat[None]['+'] }} addition{% if stat[None]['+'] != 1 %}s{% endif %},
+    {{ stat[None]['-'] }} deletion{% if stat[None]['-'] != 1 %}s{% endif %})
+</h2>
+{% for file in diff.changes['files'] %}
+<div class="blob">
+<h2><img src="{{ file_icon(file[1]) }}" /> <a href="{{ tree_link(repo, commit.hex, path, file[1]) }}">{{ file[1] }}</a></h2>
+<table class="blobdiff">
+{% for hunk in formatdiff[file[1]] %}
+{% set old = hunk.old_start %}
+{% set new = hunk.new_start %}
+<tr><td class="lineno">&hellip;</td><td class="lineno">&hellip;</td><td><pre>{{ hunk.header }}</pre></td></tr>
+{% for line in hunk.data %}
+{% if line[1] == 32 %}
+<tr class="context"><td class="lineno">{{ old }}</td><td class="lineno">{{ new }}</td><td class="diffcontent"><pre>{{ line[0] }}</pre></td></tr>
+{% set old = old + 1 %}{% set new = new +1 %}
+{% elif line[1] == 45 %}
+<tr class="deletion"><td class="lineno">{{ old }}</td><td class="lineno">&nbsp;</td><td class="diffcontent"><pre>{{ line[0] }}</pre></td></tr>
+{% set old = old + 1 %}
+{% elif line[1] == 43 %}
+<tr class="addition"><td class="lineno">&nbsp;</td><td class="lineno">{{ new }}</td><td class="diffcontent"><pre>{{ line[0] }}</pre></td></tr>
+{% set new = new + 1 %}
+{% elif line[1] == 66 %}
+<tr><td class="lineno">&nbsp;</td><td class="lineno">&nbsp;</td>(Binary change)</td></tr>
+{% endif %}
+{% endfor %}
+{% endfor %}
+</table>
+</div>
+
+{% endfor %}
+</div>
+{% endblock %}

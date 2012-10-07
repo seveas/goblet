@@ -1,0 +1,9 @@
+
+{% extends "base.html" %}
+{% block content %}
+<h2><a href="./{{ repo.name }}/">{{ repo.name }}</a> <span class="owner">by {{ repo.owner }}</span></h2>
+{{ repo.description }}
+<div class="nocommit">
+There are no commits yet in this repository
+</div>
+{% endblock %}

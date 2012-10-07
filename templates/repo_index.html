@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Git repositories on {{ request.host }}{% endblock %}
+{% block content %}
+<h1>Git repositories on {{ request.host }}</h1>
+
+{% for repo in repos %}
+<div class="repo">
+<h2><a href="{{ url_for('repo', repo=repo.name) }}">{{ repo.name }}</a> <span class="owner">by {{ repo.owner }}</span></h2>
+{{ repo.description }}
+<div class="lastchange">
+{% if repo.head %}
+Last updated <a href="{{ url_for('commit', repo=repo.name, ref=repo.head.hex) }}">{{ repo.head.commit_time|humantime }}</a>,
+by {{ repo.head.author.name }} <img src="{{ repo.head.author.email | gravatar(20) }}" />
+{% else %}
+No commits yet
+{% endif %}
+</div>
+</div>
+{% endfor %}
+{% endblock %}

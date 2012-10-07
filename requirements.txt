@@ -1,0 +1,6 @@
+chardet
+jinja2
+pygments
+flask
+markdown
+pygit2 (and thus libgit2)

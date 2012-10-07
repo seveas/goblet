@@ -1,0 +1,50 @@
+{% extends "repo_base.html" %}
+{% block repo_content %}
+<div class="commits">
+  {% for commit in log %}
+  {% if last_date != commit.commit_time - commit.commit_time % 86400 %}
+  {% set last_date = commit.commit_time - commit.commit_time % 86400 %}
+  <div class="commitdate">{{ commit.commit_time|strftime("%b %d, %Y") }}</div>
+  {% endif %}
+  <a name="{{ commit.hex }}"></a>
+  <div class="commit">
+    <div class="commitmsg">
+    <img class="gravatar" src="{{ commit.author.email|gravatar(36) }}" />
+    <a href="{{ url_for('commit', repo=repo.name, ref=commit.hex) }}">{{ commit.message|shortmsg }}</a> {% if commit.message|longmsg %}<span class="show_long">more&hellip;</span>{% endif %}
+    {{ commit.message|longmsg }}
+    <div class="commitdata">
+    <span class="author">{{ commit.author.name }} authored {{ commit.author.time|humantime }}</span>
+    {% if commit.committer.email != commit.author.email %}
+    <br /><span class="committer">{{ commit.committer.name }} committed {{ commit.committer.time|humantime }}</span>
+    {% endif %}
+    {% if commit.parents %}
+    <br /><span class="parents">Parent commit{% if commit.parents|length != 1 %}s{% endif %}:
+    {% for parent in commit.parents %}
+    {% if parent.hex in shas %}
+    <a href="#{{ parent.hex }}">{{ parent.hex[:7] }}</a>
+    {% else %}
+    <a href="{{ url_for('log', repo=repo.name, ref=parent.hex) }}">{{ parent.hex[:7] }}</a>
+    {% endif %}
+    {% endfor %}
+    </span>
+    {% endif %}
+    </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="pagination">
+{% if prev_page -%}
+<a class="pagelink-prev " href="./?page={{ prev_page }}">« Newer</a>
+{%- else -%}
+<span class="pagelink-prev disabled">« Newer</span>
+{%- endif -%}
+{%- if next_page -%}
+<a class="pagelink-next" href="./?page={{ next_page }}">Older »</a>
+{%- else -%}
+<span class="pagelink-next disabled">Older »</span>
+{%- endif -%}
+</div>
+
+{% endblock %}

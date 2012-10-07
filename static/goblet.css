@@ -1,0 +1,265 @@
+.goblet {
+    background-color: #fcfcfa;
+    color: rgb(78, 68, 60);
+    background: url("/static/body.jpg") repeat scroll 0% 0% rgb(240, 239, 231);
+    font-family: "Droid Serif",Georgia,"Times New Roman",serif;
+    font-size: 15px;
+    padding: 5px;
+    margin: 0px;
+}
+.goblet * {
+    padding: 0px;
+    margin: 0px;
+}
+.goblet #search {
+    position: absolute;
+    z-index: 1000;
+    right: 5px;
+    top: 10px;
+    width: 262px;
+    padding-left: 32px;
+    background: url("/static/search.png") no-repeat scroll 10px 50% rgb(252, 252, 250);
+    border: 1px solid rgb(206, 204, 197);
+    border-radius: 20px 20px 20px 20px;
+    box-shadow: 0px 1px 4px rgb(221, 221, 221) inset;
+}
+.goblet #search input {
+    border-radius: 20px 20px 20px 20px;
+    border: medium none;
+    margin-top: 5px;
+    margin-bottom: 1px;
+    line-height: 1em;
+    width: 100%;
+    height: 20px;
+    background-color: transparent;
+}
+
+.goblet input:-moz-placeholder {
+    color: rgb(154, 153, 148) !important;
+}
+
+.goblet a, .goblet a:hover, .goblet a:active {
+    color: rgb(3, 136, 166);
+    text-decoration: none;
+}
+
+.goblet #content {
+    background-color: white;
+    border-radius: 10px;
+    border: 1px solid rgb(226, 224, 216);
+    padding: 0.3em 1em;
+    margin: 0;
+}
+.goblet h1 {
+    font-size: 28px;
+    line-height: 44px;
+    margin-bottom: 0.4em;
+}
+.goblet h2 {
+    font-size: 18px;
+    line-height: 44px;
+    margin-bottom: 0.4em;
+    font-weight: bold;
+}
+.goblet h1, .goblet h2, .goblet h3, .goblet h4, .goblet h5, .goblet h6 {
+    margin: 0px;
+}
+.goblet .repo {
+    border-top: 1px solid rgb(226, 224, 216);
+    padding: 0 1em 1em 1em;
+    margin-bottom: 0.2em;
+}
+.goblet .owner {
+    color: rgb(154, 153, 148);
+    font-size: 50%;
+}
+.goblet .lastchange {
+    color: rgb(154, 153, 148);
+    font-size: 75%;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+.goblet .footer {
+    color: rgb(154, 153, 148);
+    text-align: center;
+    font-size: 70%;
+}
+.goblet .tabnav {
+    border-bottom: solid 1px rgb(226, 224, 216);
+    margin: 10px 0px;
+    padding: 0px;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+.goblet .tabnav-tabs {
+    display: inline-block;
+    margin: 4px 8px 4px 0px;
+}
+.goblet .tabnav-tabs > li {
+    display: inline-block;
+}
+.goblet .tabnav-tabs > li .chzn-container {
+    position: relative;
+    bottom: -10px;
+}
+.goblet .tabnav-tabs > li .chzn-single {
+    padding: 4px 8px;
+}
+.goblet .tabnav-tabs a {
+    border-color: rgb(226, 224, 216);
+    border-radius: 3px 3px 0px 0px;
+    color: rgb(78, 68, 60);
+    background-color: white;
+}
+.goblet .tabnav-tab {
+    border-width: 1px 1px 0px;
+    border-style: solid solid none;
+    padding: 4px 8px;
+    margin: 0px 10px;
+    background-color: white;
+}
+.goblet .tabnav-tabs .selected {
+    font-weight: bold;
+    padding-bottom: 5px;
+    background-color: white;
+}
+.nocommit {
+    margin: 100px;
+    text-align: center;
+    font-size: 150%;
+    color: rgb(226, 224, 216);
+}
+.goblet #filetree {
+    width: 100%;
+}
+.goblet #filetree th {
+    text-align: left;
+}
+.goblet #filetree .name, .goblet #filetree .age {
+    white-space: nowrap;
+    padding-right: 15px;
+    padding-left: 10px;
+}
+.goblet #filetree .message {
+    width: 99%;
+}
+.goblet #filetree tbody, .goblet .commit {
+    font-family: 'Source Sans Pro', sans-serif;
+}
+.goblet #filetree img {
+    vertical-align: middle;
+}
+.goblet #filetree td {
+    padding: 2px;
+}
+.goblet .blob {
+    border: solid 1px rgb(226, 224, 216);
+    margin: 1em;
+}
+
+.goblet .blob-inner {
+    padding: 10px;
+}
+
+.goblet .blob h2 {
+    background-color: rgb(226, 224, 216);
+    padding: 0px 10px;
+    background-repeat: no-repeat;
+}
+
+.goblet .blob {
+    overflow: auto;
+}
+.goblet .commit .gravatar {
+    border-radius: 4px;
+    float: left;
+    margin-left: -44px;
+}
+.goblet .commit {
+    border-bottom: solid 1px rgb(226, 224, 216);
+    border-left: solid 1px rgb(226, 224, 216);
+    border-right: solid 1px rgb(226, 224, 216);
+    padding: 5px;
+    overflow: auto;
+}
+.goblet .commitmsg {
+    margin-left: 44px;
+}
+
+.goblet .commits pre {
+    display: none;
+}
+
+.goblet .commitmsg a {
+    color: rgb(78, 68, 60);
+    font-weight: bold;
+}
+
+.goblet .commitmsg a:hover {
+    color: rgb(78, 68, 60);
+    font-weight: bold;
+    text-decoration: underline;
+}
+.goblet .commitdata {
+    color: rgb(154, 153, 148);
+    font-size: 90%;
+}
+.goblet .commitmsg .committer {
+    margin-left: 2em;
+}
+.goblet pre {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 12px;
+    color: rgb(51, 51, 51);
+}
+.goblet .show_long {
+    color: rgb(154, 153, 148); 
+}
+.highlight .lineno { color: rgb(154, 153, 148); }
+.highlight .special { color: rgb(78, 68, 60); }
+
+.goblet .commitdate {
+    border: solid 1px rgb(226, 224, 216);
+    font-weight: bold;
+    border-radius: 8px 8px 0px 0px;
+    padding: 3px 5px;
+    font-size: 110%;
+    background-color: rgb(226, 224, 216);
+    margin-top: 10px;
+}
+.blobdiff {
+    width: 100%;
+    border-spacing: 0px;
+    border-collapse: collapse;
+}
+.blobdiff td {
+    font-size: 12px;
+    padding: 0px 8px;
+    line-height: 150%;
+}
+.deletion .diffcontent {
+    background-color: rgb(255, 221, 221);
+}
+.addition .diffcontent {
+    background-color: rgb(221, 255, 221);
+}
+.blobdiff tr:hover, .blobdiff tr:hover * {
+    background-color: rgb(255, 255, 204);
+}
+.blobdiff .lineno {
+    background-color: rgb(226, 224, 216);
+}
+.pagelink-prev {
+    padding: 8px 10px;
+    background-color: rgb(226,224,216);
+    line-height: 150%;
+    border-radius: 5px 0 0 5px;
+}
+.pagelink-next {
+    padding: 8px 10px;
+    background-color: rgb(226,224,216);
+    line-height: 150%;
+    border-radius: 0 5px 5px 0;
+}
+.pagination {
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
