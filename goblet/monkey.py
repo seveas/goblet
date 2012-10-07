@@ -3,6 +3,7 @@ import pygit2
 from flask import current_app
 from memoize import memoize
 import pwd
+import pygments.lexers
 import stat
 
 class Repository(pygit2.Repository):
@@ -69,13 +70,22 @@ class Repository(pygit2.Repository):
                 break
             yield commit
 
+    def ls_tree(self, tree, path=''):
+        ret = []
+        for entry in tree:
+            if stat.S_ISDIR(entry.filemode):
+                ret += self.ls_tree(entry.to_object(), os.path.join(path, entry.name))
+            else:
+                ret.append(os.path.join(path, entry.name))
+        return ret
+
     def tree_lastchanged(self, commit, path):
         """Get a dict containing oid and commit that last changed files in a directory"""
-        files = dict([(x.name, {'id': x.oid, 'commit': None}) for x in get_tree(commit.tree, path)])
+        files = dict([(x.name, {'id': x.oid, 'hex': x.hex, 'commit': None}) for x in get_tree(commit.tree, path)])
         last_commit = commit
 
-        for commit in r.walk(c.hex, pygit2.GIT_SORT_TIME):
-            tree = get_tree(commit.tree, d)
+        for commit in self.walk(commit.hex, pygit2.GIT_SORT_TIME):
+            tree = get_tree(commit.tree, path)
 
             # No tree? Last commit introduced us!
             if not tree:
@@ -120,3 +130,6 @@ pygit2.Repository = Repository
 def S_ISGITLNK(mode):
     return (mode & 0160000) == 0160000
 stat.S_ISGITLNK = S_ISGITLNK
+
+# Let's detect .pl as perl instead of prolog
+pygments.lexers.LEXERS['PrologLexer'] = ('pygments.lexers.compiled', 'Prolog', ('prolog',), ('*.prolog', '*.pro'), ('text/x-prolog',))

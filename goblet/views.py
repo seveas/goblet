@@ -9,10 +9,13 @@ import chardet
 import mimetypes
 from collections import namedtuple
 
+class NotFound(Exception):
+    pass
+
 class TemplateView(View):
-    def render(self, **context):
+    def render(self, context):
         return render_template(self.template_name, **context)
-    def nocommits(self, **context):
+    def nocommits(self, context):
         return render_template("nocommits.html", **context)
 
 class IndexView(TemplateView):
@@ -23,83 +26,43 @@ class IndexView(TemplateView):
         repos = glob.glob(os.path.join(root, '*.git')) + glob.glob(os.path.join(root, '*', '.git'))
         repos = [pygit2.Repository(x) for x in sorted(repos, key=lambda x:x.lower())]
         repos[0].name
-        return self.render(repos=repos)
+        return self.render({'repos': repos})
 
-class RefView(TemplateView):
-    def lookup_ref(self, repo, ref):
-        if not ref:
-            return repo.head
+class RepoBaseView(TemplateView):
+    template_name = None
+    def dispatch_request(self, repo, *args, **kwargs):
+        root = current_app.config['REPO_ROOT']
         try:
-            ref = repo.lookup_reference('refs/heads/' + ref).hex
+            repo = pygit2.Repository(os.path.join(root, repo))
         except KeyError:
-            pass
+            return "No such repo", 404
+        if not repo.head:
+            return self.nocommits(repo=repo)
+        data = {'repo': repo, 'action': request.endpoint}
         try:
-            return repo[ref]
-        except (KeyError, ValueError):
-            return None
+            ret = self.handle_request(repo, *args, **kwargs)
+        except NotFound, e:
+            return str(e), 404
+        if self.template_name:
+            data.update(ret)
+            return self.render(data)
+        # For rawview
+        return ret
 
-class CommitView(RefView):
-    template_name = 'commit.html'
-    def dispatch_request(self, repo, ref=None):
-        root = current_app.config['REPO_ROOT']
-        repo = pygit2.Repository(os.path.join(root, repo))
-        if not repo.head:
-            return self.nocommits(repo=repo)
-        ref = self.lookup_ref(repo, ref)
-        if not ref:
-            return "No such commit", 404
+class TagsView(RepoBaseView):
+    template_name = 'tags.html'
+    tags_per_page = 50
 
-        if not ref.parents:
-            diff = {'changes': {'files': [(None, x.name) for x in ref.tree]}}
-            diff_, stat = fakediff(ref.tree)
-        else:
-            diff = ref.parents[0].tree.diff(ref.tree)
-            diff_, stat = realdiff(diff)
-        return self.render(repo=repo, commit=ref, diff=diff, formatdiff=diff_, stat=stat)
-
-def fakediff(tree):
-    files = {}
-    stat = {}
-    for file in tree:
-        lines = file.to_object().data.split('\n')
-        stat[file.name] = {'+': len(lines), '-': 0}
-        files[file.name] = [{
-            'header': '@@ -0,0 +1,%d' % len(lines),
-            'data': [(x, pygit2.GIT_DIFF_LINE_ADDITION) for x in lines],
-            'new_start': 0,
-            'old_start': 0,
-        }]
-    stat[None] = {'-': sum([x['-'] for x in stat.values()]), '+': sum([x['+'] for x in stat.values()])}
-    return files, stat
-
-def realdiff(diff):
-    files = {}
-    stat = {}
-    # Can happen with subproject-only commits
-    if not diff.changes:
-        return {}, {None: {'+': 0, '-': 0}}
-    for file in diff.changes['files']:
-        files[file[1]] = []
-        stat[file[1]] = {'-': 0, '+': 0}
-    for hunk in diff.changes['hunks']:
-        files[hunk.new_file].append(hunk)
-        stat[hunk.new_file]['-'] += len([x for x in hunk.data if x[1] == pygit2.GIT_DIFF_LINE_DELETION])
-        stat[hunk.new_file]['+'] += len([x for x in hunk.data if x[1] == pygit2.GIT_DIFF_LINE_ADDITION])
-    stat[None] = {'-': sum([x['-'] for x in stat.values()]), '+': sum([x['+'] for x in stat.values()])}
-    return files, stat
-
-class LogView(RefView):
-    template_name = 'log.html'
-    commits_per_page = 50
-
-    def dispatch_request(self, repo, ref=None):
-        root = current_app.config['REPO_ROOT']
-        repo = pygit2.Repository(os.path.join(root, repo))
-        if not repo.head:
-            return self.nocommits(repo=repo)
-        ref = self.lookup_ref(repo, ref)
-        if not ref:
-            return "No such commit", 404
+    def handle_request(self, repo):
+        tags = [repo.lookup_reference(x) for x in repo.listall_references() if x.startswith('refs/tags')]
+        tags = [(tag.name[10:], repo[tag.hex]) for tag in tags]
+        # Annotated tags vs normal tags
+        # Result is list of (name, tag or None, commit)
+        tags = [(name, hasattr(tag, 'target') and tag or None, hasattr(tag, 'target') and repo[tag.target] or tag) for name, tag in tags]
+        # Filter out non-commits
+        tags = [x for x in tags if x[2].type == pygit2.GIT_OBJ_COMMIT]
+        # Sort by tag-time or commit-time
+        tags.sort(reverse=True, key=lambda t: t[1] and t[1].tagger and t[1].tagger.time or t[2].commit_time)
 
         page = 1
         try:
@@ -108,16 +71,19 @@ class LogView(RefView):
             pass
         page = max(1,page)
         next_page = prev_page = None
+        total = len(tags)
         if page > 1:
             prev_page = page - 1
-
-        log = list(repo.get_commits(ref, skip=self.commits_per_page * (page-1), count=self.commits_per_page))
-        if log[-1].parents:
+        if total > self.tags_per_page * page:
             next_page = page + 1
-        shas = [x.hex for x in log]
-        return self.render(repo=repo, ref=repo.symref(ref), log=list(log), shas=shas, next_page=next_page, prev_page=prev_page)
 
-class PathView(TemplateView):
+        start = (page-1) * self.tags_per_page
+        end = min(start + 50, total)
+        return {'tags': tags[start:end], 'start': start+1, 'end': end, 'total': total, 'prev_page': prev_page, 'next_page': next_page}
+
+# Repo, path and blob
+
+class PathView(RepoBaseView):
     def split_ref(self, repo, path, expects_file=False):
         file = None
         # First extract branch, which can contain slashes
@@ -136,21 +102,21 @@ class PathView(TemplateView):
             if ref in repo:
                 tree = repo[ref].tree
             else:
-                return None, 'No such ref', None, None
+                raise NotFound("No such commit/ref")
 
         # Remainder is path
         path_ = path.split('/')
         while path and path_:
             if path_[0] not in tree:
-                return None, 'No such path', None, None
+                raise NotFound("No such file")
             entry = tree[path_.pop(0)]
 
             if expects_file and not path_:
                 if not stat.S_ISREG(entry.filemode):
-                    return None, 'Not a file', None, None 
+                    raise NotFound("Not a file")
                 file = entry
             elif not stat.S_ISDIR(entry.filemode):
-                return None, 'Not a path %s %s %s' % (entry.name, str(path_), str(expects_file)), None, None 
+                raise NotFound("Not a folder")
             else:
                 tree = entry.to_object()
 
@@ -159,41 +125,32 @@ class PathView(TemplateView):
 class TreeView(PathView):
     template_name = 'tree.html'
 
-    def dispatch_request(self, repo, path):
-        root = current_app.config['REPO_ROOT']
-        repo = pygit2.Repository(os.path.join(root, repo))
-        if not repo.head:
-            return self.nocommits(repo=repo)
-
+    def handle_request(self, repo, path):
         ref, path, tree, _ = self.split_ref(repo, path)
-        if not ref:
-            return path, 404
-        return self.render(repo=repo, tree=tree, ref=ref, path=path)
+        return {'tree': tree, 'ref': ref, 'path': path}
+
+class RepoView(TreeView):
+    def handle_request(self, repo):
+        tree = repo.head.tree
+        readme = None
+        for file in tree:
+            if re.match(r'^readme(?:.(?:txt|rst|md))?$', file.name, flags=re.I):
+                readme = file
+        return {'readme': readme, 'tree': tree, 'ref': repo.symref(repo.head), 'path': ''}
 
 class BlobView(PathView):
     template_name = 'blob.html'
 
-    def dispatch_request(self, repo, path):
-        root = current_app.config['REPO_ROOT']
-        repo = pygit2.Repository(os.path.join(root, repo))
-        if not repo.head:
-            return self.nocommits(repo=repo)
-
+    def handle_request(self, repo, path):
         ref, path, tree, file = self.split_ref(repo, path, expects_file=True)
-        if not ref:
-            return path, 404
-        return self.render(repo=repo, tree=tree, ref=ref, path=path, file=file)
+        return {'tree': tree, 'ref': ref, 'path': path, 'file': file}
 
 class RawView(PathView):
-    def dispatch_request(self, repo, path):
-        root = current_app.config['REPO_ROOT']
-        repo = pygit2.Repository(os.path.join(root, repo))
-        if not repo.head:
-            return self.nocommits(repo=repo)
-
+    template = None
+    def handle_request(self, repo, path):
         ref, path, tree, file = self.split_ref(repo, path, expects_file=True)
         if not ref:
-            return path, 404
+            raise NotFound("No such file")
 
         # Try to detect the mimetype
         mimetype, encoding = mimetypes.guess_type(file.name)
@@ -214,18 +171,99 @@ class RawView(PathView):
             headers['Content-Encoding'] = encoding
         return (data, 200, headers)
 
-class RepoView(TreeView):
-    def dispatch_request(self, repo):
-        root = current_app.config['REPO_ROOT']
-        repo = pygit2.Repository(os.path.join(root, repo))
-        if not repo.head:
-            return self.nocommits(repo=repo)
-        tree = repo.head.tree
-        readme = readme_name = renderer = None
-        for file in tree:
-            if re.match(r'^readme(?:.(?:txt|rst|md))?$', file.name, flags=re.I):
-                readme = file
-        return self.render(repo=repo, readme=readme, tree=tree, ref=repo.symref(repo.head), path='')
+# Log, commit and diff
+
+class RefView(RepoBaseView):
+    def lookup_ref(self, repo, ref):
+        if not ref:
+            return repo.head
+        try:
+            ref = repo.lookup_reference('refs/heads/' + ref).hex
+        except KeyError:
+            pass
+        try:
+            return repo[ref]
+        except (KeyError, ValueError):
+            raise NotFound("No such commit/ref")
+
+class LogView(RefView):
+    template_name = 'log.html'
+    commits_per_page = 50
+
+    def handle_request(self, repo, ref=None):
+        ref = self.lookup_ref(repo, ref)
+        page = 1
+        try:
+            page = int(request.args['page'])
+        except (KeyError, ValueError):
+            pass
+        page = max(1,page)
+        next_page = prev_page = None
+        if page > 1:
+            prev_page = page - 1
+
+        log = list(repo.get_commits(ref, skip=self.commits_per_page * (page-1), count=self.commits_per_page))
+        if log[-1].parents:
+            next_page = page + 1
+        shas = [x.hex for x in log]
+        return {'ref': repo.symref(ref), 'log': log, 'shas': shas, 'next_page': next_page, 'prev_page': prev_page}
+
+class CommitView(RefView):
+    template_name = 'commit.html'
+
+    def handle_request(self, repo, ref=None):
+        ref = self.lookup_ref(repo, ref)
+        if not ref.parents:
+            diff = {'changes': {'files': [(None, x) for x in repo.ls_tree(ref.tree)]}}
+            print diff
+            diff_, stat = fakediff(ref.tree)
+        else:
+            diff = ref.parents[0].tree.diff(ref.tree)
+            diff_, stat = realdiff(diff)
+        return {'commit': ref, 'diff': diff, 'formatdiff': diff_, 'stat': stat}
+
+def fakediff(tree):
+    files = {}
+    fstat = {}
+    for file in tree:
+        if stat.S_ISDIR(file.filemode):
+            f2, s2 = fakediff(file.to_object())
+            for f in f2:
+                files[os.path.join(file.name, f)] = f2[f]
+                fstat[os.path.join(file.name, f)] = s2[f]
+            continue
+
+        data = file.to_object().data
+        if '\0' in data:
+            # Binary file, ignore
+            continue
+        data = data.decode(chardet.detect(data)['encoding'] or 'utf-8')
+        lines = data.strip().split('\n')
+        fstat[file.name] = {'+': len(lines), '-': 0}
+        files[file.name] = [{
+            'header': '@@ -0,0 +1,%d' % len(lines),
+            'data': [(x, pygit2.GIT_DIFF_LINE_ADDITION) for x in lines],
+            'new_start': 1,
+            'old_start': 0,
+        }]
+    fstat[None] = {'-': sum([x['-'] for x in fstat.values()]), '+': sum([x['+'] for x in fstat.values()])}
+    return files, fstat
+
+def realdiff(diff):
+    files = {}
+    stat = {}
+    # Can happen with subproject-only commits
+    if not diff.changes:
+        return {}, {None: {'+': 0, '-': 0}}
+    for file in diff.changes['files']:
+        files[file[1]] = []
+        stat[file[1]] = {'-': 0, '+': 0}
+    for hunk in diff.changes['hunks']:
+        files[hunk.new_file].append(hunk)
+        stat[hunk.new_file]['-'] += len([x for x in hunk.data if x[1] == pygit2.GIT_DIFF_LINE_DELETION])
+        stat[hunk.new_file]['+'] += len([x for x in hunk.data if x[1] == pygit2.GIT_DIFF_LINE_ADDITION])
+    stat[None] = {'-': sum([x['-'] for x in stat.values()]), '+': sum([x['+'] for x in stat.values()])}
+    return files, stat
 
 Fakefile = namedtuple('Fakefile', ('name', 'filemode'))
 def tree_link(repo, ref, path, file):

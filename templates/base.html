@@ -5,14 +5,21 @@
   <meta charset="utf-8">
   <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
   <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon">
-  <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:400,700&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-  <link href='http://fonts.googleapis.com/css?family=Droid+Serif:400,700&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:400,700&amp;subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700&amp;subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Droid+Serif:400,700&amp;subset=latin,latin-ext' rel='stylesheet' type='text/css'>
   <link href="/static/goblet.css" media="screen" rel="stylesheet" type="text/css" />
   <link href="/static/pygments.css" media="screen" rel="stylesheet" type="text/css" />
   <link href="/static/chosen.css" media="screen" rel="stylesheet" type="text/css" />
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
   <script src="/static/chosen/chosen.jquery.min.js"></script>
+  <script type="text/javascript">
+      var action = {{ action|ornull }};
+      var repo = {{ repo|ornull }};
+      var ref = {{ [ref, commit]|ornull }};
+      var path = {{ path|ornull }};
+  </script>
+  <script src="/static/goblet.js"></script>
 </head>
 <body class="goblet" id="{% block bodyid %}goblet{% endblock %}">
   <header>

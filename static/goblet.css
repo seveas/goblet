@@ -184,7 +184,7 @@
     margin-left: 44px;
 }
 
-.goblet .commits pre {
+.goblet .commits .invisible {
     display: none;
 }
 
@@ -212,6 +212,9 @@
 }
 .goblet .show_long {
     color: rgb(154, 153, 148); 
+}
+.goblet .show_long:hover {
+    text-decoration: underline;
 }
 .highlight .lineno { color: rgb(154, 153, 148); }
 .highlight .special { color: rgb(78, 68, 60); }

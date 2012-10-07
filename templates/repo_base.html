@@ -10,14 +10,13 @@
     <li><a class="tabnav-tab {% if tree %}selected{% endif %}" href="{{ url_for('repo', repo=repo.name) }}">Files</a></li>
     {% endif %}
     {% if ref %}
-    <li><a class="tabnav-tab {% if log or commit %}selected{% endif %}" href="{{ url_for('log', repo=repo.name, ref=ref) }}">Commits</a></li>
+    <li><a class="tabnav-tab {% if log or commit %}selected{% endif %}" href="{{ url_for('commits', repo=repo.name, ref=ref) }}">Commits</a></li>
     {% else %}
-    <li><a class="tabnav-tab {% if log or commit %}selected{% endif %}" href="{{ url_for('log', repo=repo.name) }}">Commits</a></li>
+    <li><a class="tabnav-tab {% if log or commit %}selected{% endif %}" href="{{ url_for('commits', repo=repo.name) }}">Commits</a></li>
     {% endif %}
-    <li><a class="tabnav-tab" href="./tags/">Tags</a></li>
-    <li><a class="tabnav-tab" href="./downloads/">Downloads</a></li>
+    <li><a class="tabnav-tab {% if tags %}selected{% endif %}" href="{{ url_for('tags', repo=repo.name) }}">Tags</a></li>
     <li class="selector">
-      <select id="branches" class="chzn-select" onchange="select_repo()">
+      <select id="branches" class="chzn-select">
         {% for branch in repo.branches() %}
         <option value="{{ branch }}">{{ branch }}</option>
         {% endfor %}
@@ -29,5 +28,6 @@
 {% endblock %}
 <script type="text/javascript">
 $(".chzn-select").chosen();
+$("#branches").change(switch_branch);
 </script>
 {% endblock %}

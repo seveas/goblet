@@ -1,5 +1,5 @@
 from flask import current_app as app, url_for
-from jinja2 import Markup, escape
+from jinja2 import Markup, escape, Undefined
 import hashlib
 from goblet.memoize import memoize
 import stat
@@ -65,7 +65,7 @@ def longmsg(message):
     long = long.strip()
     if not long:
         return ""
-    return Markup('<pre>%s</pre>') % escape(long)
+    return Markup('<pre class="invisible">%s</pre>') % escape(long)
 
 @filter
 def strftime(timestamp, format):
@@ -73,8 +73,23 @@ def strftime(timestamp, format):
 
 @filter
 def decode(data):
-    encoding = chardet.detect(data)['encoding']
+    encoding = chardet.detect(data)['encoding'] or 'utf-8'
     return data.decode(encoding)
+
+@filter
+def ornull(data):
+    if hasattr(data, '__iter__'):
+        for d in data:
+            if not isinstance(d, Undefined):
+                data = d
+                break
+        else:
+            return 'null'
+    if isinstance(data, Undefined):
+        return 'null'
+    for attr in ('name', 'hex'):
+        data = getattr(data, attr, data)
+    return Markup('"%s"') % data
 
 def register_filters(app):
     app.jinja_env.filters.update(filters)

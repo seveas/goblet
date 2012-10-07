@@ -5,6 +5,7 @@ import os, sys
 import goblet.monkey
 import goblet.filters
 import goblet.views as v
+import goblet.json_views as j
 import goblet.render
 
 root = os.path.dirname(os.path.abspath(__file__))
@@ -25,8 +26,9 @@ app.add_url_rule('/j/<repo>/treechanged/<path:path>/', view_func=j.TreeChangedVi
 app.add_url_rule('/<repo>/blob/<path:path>', view_func=v.BlobView.as_view('blob'))
 app.add_url_rule('/<repo>/raw/<path:path>', view_func=v.RawView.as_view('raw'))
 app.add_url_rule('/<repo>/commit/<path:ref>/', view_func=v.CommitView.as_view('commit'))
-app.add_url_rule('/<repo>/commits/', view_func=v.LogView.as_view('log'))
-app.add_url_rule('/<repo>/commits/<path:ref>/', view_func=v.LogView.as_view('log'))
+app.add_url_rule('/<repo>/commits/', view_func=v.LogView.as_view('commits'))
+app.add_url_rule('/<repo>/commits/<path:ref>/', view_func=v.LogView.as_view('commits'))
+app.add_url_rule('/<repo>/tags/', view_func=v.TagsView.as_view('tags'))
 
 @app.context_processor
 def inject_functions():

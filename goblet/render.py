@@ -3,6 +3,7 @@ from jinja2 import Markup, escape
 import pygments
 import pygments.formatters
 import pygments.lexers
+
 import re
 import chardet
 import markdown as markdown_
@@ -42,7 +43,24 @@ def detect_renderer(entry):
 
     if data.startswith('#!'):
         shbang = data[:data.find('\n')]
-        return shbang
+#       Needs to match:
+#       #!python
+#       #!/path/to/python
+#       #!/path/to/my-python
+#       #!/path/to/python2.7
+#       And any permutation of those features
+#                             path     prefix   interp    version
+        shbang = re.match(r'#!(?:\S*/)?(?:\S*-)?([^0-9 ]*)(?:\d.*)?', shbang).group(1)
+        # Fixers
+        shbang = {
+            'sh':   'bash',
+            'ksh':  'bash',
+            'zsh':  'bash',
+            'node': 'javascript',
+        }.get(shbang, shbang)
+        lex = pygments.lexers.find_lexer_class(shbang.title())
+        if lex:
+            return 'code', lex()
 
     if '\0' in data:
         return 'binary',
@@ -60,15 +78,15 @@ def image(repo, ref, path, entry):
 @renderer
 def plain(repo, ref, path, entry):
     data = entry.to_object().data
-    encoding = chardet.detect(data)['encoding']
-    data = data.decode(encoding)
-    data = re.sub(r'(https?://\S+)', Markup(r'<a href="\1">\1</a>'), data)
+    encoding = chardet.detect(data)['encoding'] or 'utf-8'
+    data = escape(data.decode(encoding))
+    data = re.sub(r'(https?://(?:[-a-zA-Z0-9\._~:/?#\[\]@!\'()*+,;=]+|&amp;)+)', Markup(r'<a href="\1">\1</a>'), data)
     return Markup(u"<pre>%s</pre>" % data)
 
 @renderer
 def code(repo, ref, path, entry, lexer, data=None):
     data = data or entry.to_object().data
-    encoding = chardet.detect(data)['encoding']
+    encoding = chardet.detect(data)['encoding'] or 'utf-8'
     data = data.decode(encoding)
     formatter = pygments.formatters.html.HtmlFormatter(linenos='inline', linenospecial=10, encoding='utf-8')
     return Markup(pygments.highlight(data, lexer, formatter).decode('utf-8'))
@@ -76,14 +94,14 @@ def code(repo, ref, path, entry, lexer, data=None):
 @renderer
 def markdown(repo, ref, path, entry):
     data = entry.to_object().data
-    encoding = chardet.detect(data)['encoding']
+    encoding = chardet.detect(data)['encoding'] or 'utf-8'
     data = data.decode(encoding)
     return Markup(markdown_.Markdown(safe_mode="escape").convert(data))
 
 @renderer
 def rest(repo, ref, path, entry):
     data = entry.to_object().data
-    encoding = chardet.detect(data)['encoding']
+    encoding = chardet.detect(data)['encoding'] or 'utf-8'
     data = data.decode(encoding)
     settings = {
         'file_insertion_enabled': False,

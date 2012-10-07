@@ -23,7 +23,7 @@
     {% if parent.hex in shas %}
     <a href="#{{ parent.hex }}">{{ parent.hex[:7] }}</a>
     {% else %}
-    <a href="{{ url_for('log', repo=repo.name, ref=parent.hex) }}">{{ parent.hex[:7] }}</a>
+    <a href="{{ url_for('commits', repo=repo.name, ref=parent.hex) }}">{{ parent.hex[:7] }}</a>
     {% endif %}
     {% endfor %}
     </span>
@@ -46,5 +46,7 @@
 <span class="pagelink-next disabled">Older »</span>
 {%- endif -%}
 </div>
-
+<script type="text/javascript">
+$('.show_long').click(toggle_longlog);
+</script>
 {% endblock %}

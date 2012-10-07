@@ -1,16 +1,15 @@
-from goblet.views import TreeView
+from goblet.views import PathView
+from goblet.filters import humantime, shortmsg
+from jinja2 import escape
 import json
 
-class TreeChangedView(repo, path):
-    def dispatch_request(self, repo, path):
-        root = current_app.config['REPO_ROOT']
-        repo = pygit2.Repository(os.path.join(root, repo))
-        if not repo.head:
-            return self.nocommits(repo=repo)
-
+class TreeChangedView(PathView):
+    def handle_request(self, repo, path):
         ref, path, tree, _ = self.split_ref(repo, path)
-        if not ref:
-            return path, 404
-
-        lastchanged = repo.tree_lastchanged(ref, path.split('/'))
-        return
+        if ref not in repo:
+            ref = repo.lookup_reference('refs/heads/%s' % ref).hex
+        lastchanged = repo.tree_lastchanged(repo[ref], path and path.split('/') or [])
+        ret = {}
+        for file, data in lastchanged.iteritems():
+            ret[file] = [data['hex'][:7], humantime(data['commit'].commit_time), data['commit'].hex, escape(shortmsg(data['commit'].message))]
+        return json.dumps(ret), 200, {'Content-Type': 'application/json'}
