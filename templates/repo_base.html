@@ -17,8 +17,11 @@
     <li><a class="tabnav-tab {% if tags %}selected{% endif %}" href="{{ url_for('tags', repo=repo.name) }}">Tags</a></li>
     <li class="selector">
       <select id="branches" class="chzn-select">
+        {% if symref not in repo.branches() %}
+        <option value="{{ symref }}" selected="selected">commit {{ symref[:7] }}</option>
+        {% endif %}
         {% for branch in repo.branches() %}
-        <option value="{{ branch }}">{{ branch }}</option>
+        <option value="{{ branch }}" {% if branch == symref %}selected="selected"{% endif %}>{{ branch }}</option>
         {% endfor %}
       </select>
     </li>

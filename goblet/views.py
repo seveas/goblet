@@ -43,8 +43,15 @@ class RepoBaseView(TemplateView):
             ret = self.handle_request(repo, *args, **kwargs)
         except NotFound, e:
             return str(e), 404
+
         if self.template_name:
             data.update(ret)
+            if 'ref' in data:
+                data['symref'] = repo.symref(data['ref'])
+            elif 'commit' in data:
+                data['symref'] = repo.symref(data['commit'])
+            else:
+                data['symref'] = repo.symref(repo.head)
             return self.render(data)
         # For rawview
         return ret
