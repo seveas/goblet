@@ -266,3 +266,6 @@
     margin-top: 25px;
     margin-bottom: 25px;
 }
+.goblet pre.literal-block {
+    padding: 5px;
+}

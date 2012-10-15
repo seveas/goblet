@@ -107,6 +107,7 @@ def rest(repo, ref, path, entry):
         'file_insertion_enabled': False,
         'raw_enabled': False,
         'output_encoding': 'utf-8',
+        'report_level': 5,
     }
     data = docutils.core.publish_parts(data,settings_overrides=settings,writer_name='html')
     return Markup(data['body'].decode('utf-8'))
