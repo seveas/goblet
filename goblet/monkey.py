@@ -5,6 +5,7 @@ from memoize import memoize
 import pwd
 import pygments.lexers
 import stat
+from whelk import shell
 
 class Repository(pygit2.Repository):
     @memoize
@@ -70,6 +71,21 @@ class Repository(pygit2.Repository):
                 break
             yield commit
 
+    def describe(self, commit):
+        tags = [self.lookup_reference(x) for x in self.listall_references() if x.startswith('refs/tags')]
+        if not tags:
+            return 'g' + commit[:7]
+        tags = [(tag.name[10:], self[tag.hex]) for tag in tags]
+        tags = dict([(hasattr(obj, 'target') and self[obj.target].hex or obj.hex, name) for name, obj in tags])
+        count = 0
+        for parent in self.walk(commit, pygit2.GIT_SORT_TIME):
+            if parent.hex in tags:
+                if count == 0:
+                    return tags[parent.hex]
+                return '%s-%d-g%s' % (tags[parent.hex], count, commit[:7])
+            count += 1
+        return 'g' + commit[:7]
+
     def ls_tree(self, tree, path=''):
         ret = []
         for entry in tree:
@@ -116,6 +132,9 @@ class Repository(pygit2.Repository):
                 files[file]['commit'] = last_commit
         
         return files
+
+    def git(self, *args):
+        return shell.git('--git-dir', self.path, *args)
 
 def get_tree(tree, path):
     try:

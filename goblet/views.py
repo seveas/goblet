@@ -1,4 +1,4 @@
-from flask import render_template, current_app, redirect, url_for, request
+from flask import render_template, current_app, redirect, url_for, request, send_file
 from flask.views import View
 import os
 import glob
@@ -8,6 +8,7 @@ import stat
 import chardet
 import mimetypes
 from collections import namedtuple
+from whelk import shell
 
 class NotFound(Exception):
     pass
@@ -178,7 +179,7 @@ class RawView(PathView):
             headers['Content-Encoding'] = encoding
         return (data, 200, headers)
 
-# Log, commit and diff
+# Log, snapshot, commit and diff
 
 class RefView(RepoBaseView):
     def lookup_ref(self, repo, ref):
@@ -214,6 +215,37 @@ class LogView(RefView):
             next_page = page + 1
         shas = [x.hex for x in log]
         return {'ref': repo.symref(ref), 'log': log, 'shas': shas, 'next_page': next_page, 'prev_page': prev_page}
+
+snapshot_formats = {
+    'zip': ('zip', None,            'zip'    ),
+    'xz':  ('tar', ['xz'],          'tar.xz' ),
+    'gz':  ('tar', ['gzip',  '-9'], 'tar.gz' ),
+    'bz2': ('tar', ['bzip2', '-9'], 'tar.bz2'),
+}
+class SnapshotView(RefView):
+    def handle_request(self, repo, ref, format):
+        ref = self.lookup_ref(repo, ref)
+        format, compressor, ext = snapshot_formats.get(format, (None, None))
+        if not format:
+            raise NotFound("No such snapshot format")
+        cache_dir = current_app.config['CACHE_ROOT']
+        if not os.path.exists(cache_dir):
+            os.makedirs(cache_dir)
+
+        desc = repo.describe(ref.hex).replace('/', '-')
+        filename_compressed = os.path.join(cache_dir, '%s-%s.%s' % (repo.name, desc, ext))
+        filename_uncompressed = os.path.join(cache_dir, '%s-%s.%s' % (repo.name, desc, format))
+        if not os.path.exists(filename_compressed):
+            ret = repo.git('archive', '--format', format, '--prefix', '%s-%s/' % (repo.name, desc), '--output', filename_uncompressed, ref.hex)
+            if ret.returncode != 0:
+                raise RuntimeError(ret.stderr)
+            if compressor:
+                compressor = compressor[:]
+                compressor.append(filename_uncompressed)
+                ret = getattr(shell, compressor[0])(*compressor[1:])
+                if ret.returncode != 0:
+                    raise RuntimeError(ret.stderr)
+        return send_file(filename_compressed, attachment_filename=os.path.basename(filename_compressed), as_attachment=True, cache_timeout=86400)
 
 class CommitView(RefView):
     template_name = 'commit.html'

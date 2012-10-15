@@ -13,6 +13,9 @@ sys.path.insert(0, root)
 
 REPO_ROOT = os.path.dirname(root)
 DEBUG = 1
+CACHE_ROOT = '/tmp/goblet-snapshot'
+# USE_X_SENDFILE = True
+# APPLICATION_ROOT =
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -29,6 +32,7 @@ app.add_url_rule('/<repo>/commit/<path:ref>/', view_func=v.CommitView.as_view('c
 app.add_url_rule('/<repo>/commits/', view_func=v.LogView.as_view('commits'))
 app.add_url_rule('/<repo>/commits/<path:ref>/', view_func=v.LogView.as_view('commits'))
 app.add_url_rule('/<repo>/tags/', view_func=v.TagsView.as_view('tags'))
+app.add_url_rule('/<repo>/snapshot/<path:ref>/<format>/', view_func=v.SnapshotView.as_view('snapshot'))
 
 @app.context_processor
 def inject_functions():
