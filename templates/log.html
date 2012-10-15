@@ -34,6 +34,7 @@
   {% endfor %}
 </div>
 
+{% if pref_page or next_page %}
 <div class="pagination">
 {% if prev_page -%}
 <a class="pagelink-prev " href="./?page={{ prev_page }}">« Newer</a>
@@ -46,6 +47,8 @@
 <span class="pagelink-next disabled">Older »</span>
 {%- endif -%}
 </div>
+{% endif %}
+
 <script type="text/javascript">
 $('.show_long').click(toggle_longlog);
 </script>
