@@ -1,17 +1,20 @@
 #!/usr/bin/python
 
-from flask import Flask
 import os, sys
+git_checkout = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+git_checkout = os.path.exists(os.path.join(git_checkout, '.git')) and git_checkout or None
+if git_checkout:
+    sys.path.insert(0, git_checkout)
+
+from flask import Flask
 import goblet.monkey
 import goblet.filters
 import goblet.views as v
 import goblet.json_views as j
 import goblet.render
 
-root = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, root)
 
-REPO_ROOT = os.path.dirname(root)
+REPO_ROOT = os.path.dirname(git_checkout)
 DEBUG = 1
 CACHE_ROOT = '/tmp/goblet-snapshot'
 # USE_X_SENDFILE = True

@@ -38,7 +38,7 @@ class RepoBaseView(TemplateView):
         except KeyError:
             return "No such repo", 404
         if not repo.head:
-            return self.nocommits(repo=repo)
+            return self.nocommits({'repo': repo})
         data = {'repo': repo, 'action': request.endpoint}
         try:
             ret = self.handle_request(repo, *args, **kwargs)

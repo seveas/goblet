@@ -1,6 +1,10 @@
 chardet
+docutils
 jinja2
 pygments
 flask
 markdown
 pygit2 (and thus libgit2)
+whelk
+git
+xz
