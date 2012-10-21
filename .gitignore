@@ -1,0 +1,4 @@
+build
+*.py?
+__pycache__
+.*.sw?

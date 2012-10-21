@@ -1,0 +1,13 @@
+# Goblet config
+REPO_ROOT      = '/path/to/repo_root'
+CACHE_ROOT     = '/tmp/goblet-snapshot'
+ADMINS         = ['your_mailaddress@example.com']
+SENDER         = 'webmaster@localhost'
+
+# Flask config, see
+# http://flask.pocoo.org/docs/config/#builtin-configuration-values
+
+DEBUG          = True
+USE_X_SENDFILE = True
+# This is needed to make X-Sendfile work under nginx
+USE_X_ACCEL_REDIRECT = True

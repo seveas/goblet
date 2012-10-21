@@ -1,10 +1,7 @@
 chardet
 docutils
-jinja2
-pygments
 flask
+jinja2
 markdown
-pygit2 (and thus libgit2)
+pygments
 whelk
-git
-xz
