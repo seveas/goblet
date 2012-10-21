@@ -1,5 +1,4 @@
-#!/usr/bin/python
-
+# If we're running from a git checkout, make sure we use the checkout
 import os, sys
 git_checkout = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 git_checkout = os.path.exists(os.path.join(git_checkout, '.git')) and git_checkout or None
@@ -17,10 +16,22 @@ class Defaults:
     REPO_ROOT      = git_checkout and os.path.dirname(git_checkout) or '/srv/git'
     CACHE_ROOT     = '/tmp/goblet_snapshot'
     USE_X_SENDFILE = False
+    USE_X_ACCEL_REDIRECT = False
     ADMINS         = []
     SENDER         = 'webmaster@localhost'
 
-app = Flask(__name__)
+class Goblet(Flask):
+    def __call__(self, environ, start_response):
+        def x_accel_start_response(status, headers, exc_info=None):
+            if self.config['USE_X_ACCEL_REDIRECT']:
+                for num, (header, value) in enumerate(headers):
+                    if header == 'X-Sendfile':
+                        headers[num] = ('X-Accel-Redirect', '/snapshots/' + value[value.rfind('/')+1:])
+                        break
+            return start_response(status, headers, exc_info)
+        return super(Goblet, self).__call__(environ, x_accel_start_response)
+
+app = Goblet(__name__)
 app.config.from_object(Defaults)
 if 'GOBLET_SETTINGS' in os.environ:
     app.config.from_envvar("GOBLET_SETTINGS")
@@ -48,6 +59,13 @@ app.add_url_rule('/<repo>/commits/<path:ref>/', view_func=v.LogView.as_view('com
 app.add_url_rule('/<repo>/tags/', view_func=v.TagsView.as_view('tags'))
 app.add_url_rule('/<repo>/snapshot/<path:ref>/<format>/', view_func=v.SnapshotView.as_view('snapshot'))
 
+# Logging
+if not app.debug and app.config['ADMINS']:
+    import logging
+    from logging.handlers import SMTPHandler
+    mail_handler = SMTPHandler('127.0.0.1', app.config['SENDER'], app.config['ADMINS'], "Goblet error")
+    mail_handler.setLevel(logging.ERROR)
+    app.logger.addHandler(mail_handler)
 
 if __name__ == '__main__':
     app.run()
