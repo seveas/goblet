@@ -13,16 +13,27 @@ import goblet.views as v
 import goblet.json_views as j
 import goblet.render
 
-
-REPO_ROOT = os.path.dirname(git_checkout)
-DEBUG = 1
-CACHE_ROOT = '/tmp/goblet-snapshot'
-# USE_X_SENDFILE = True
-# APPLICATION_ROOT =
+class Defaults:
+    REPO_ROOT      = git_checkout and os.path.dirname(git_checkout) or '/srv/git'
+    CACHE_ROOT     = '/tmp/goblet_snapshot'
+    USE_X_SENDFILE = False
+    ADMINS         = []
+    SENDER         = 'webmaster@localhost'
 
 app = Flask(__name__)
-app.config.from_object(__name__)
+app.config.from_object(Defaults)
+if 'GOBLET_SETTINGS' in os.environ:
+    app.config.from_envvar("GOBLET_SETTINGS")
+
+# Configure parts of flask/jinja
 goblet.filters.register_filters(app)
+@app.context_processor
+def inject_functions():
+    return {
+        'tree_link': v.tree_link,
+        'file_icon': v.file_icon,
+        'render':    goblet.render.render,
+    }
 
 # URL structure
 app.add_url_rule('/', view_func=v.IndexView.as_view('index'))
@@ -37,13 +48,6 @@ app.add_url_rule('/<repo>/commits/<path:ref>/', view_func=v.LogView.as_view('com
 app.add_url_rule('/<repo>/tags/', view_func=v.TagsView.as_view('tags'))
 app.add_url_rule('/<repo>/snapshot/<path:ref>/<format>/', view_func=v.SnapshotView.as_view('snapshot'))
 
-@app.context_processor
-def inject_functions():
-    return {
-        'tree_link': v.tree_link,
-        'file_icon': v.file_icon,
-        'render':    goblet.render.render,
-    }
 
 if __name__ == '__main__':
     app.run()

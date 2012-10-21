@@ -33,7 +33,7 @@ class Repository(pygit2.Repository):
     @memoize
     def get_owner(self):
         try:
-            return self.config['gitweb.owner']
+            return self.config['goblet.owner']
         except KeyError:
             uid = os.stat(self.path).st_uid
             pwn = pwd.getpwuid(uid)
