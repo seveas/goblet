@@ -27,7 +27,6 @@ class IndexView(TemplateView):
         root = current_app.config['REPO_ROOT']
         repos = glob.glob(os.path.join(root, '*.git')) + glob.glob(os.path.join(root, '*', '.git'))
         repos = [pygit2.Repository(x) for x in sorted(repos, key=lambda x:x.lower())]
-        repos[0].name
         return self.render({'repos': repos})
 
 class RepoBaseView(TemplateView):

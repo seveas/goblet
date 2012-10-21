@@ -9,6 +9,12 @@ from whelk import shell
 from goblet.encoding import decode
 
 class Repository(pygit2.Repository):
+    def __init__(self, path):
+        if os.path.exists(path):
+            return super(Repository, self).__init__(path)
+        else:
+            return super(Repository, self).__init__(path + '.git')
+
     @memoize
     def get_description(self):
         desc = os.path.join(self.path, 'description')
@@ -26,7 +32,7 @@ class Repository(pygit2.Repository):
         if name.endswith('/.git/'):
             name = name[:-6]
         else:
-            name = name[:-1]
+            name = name[:-5]
         return name
     name = property(get_name)
 
