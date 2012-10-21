@@ -2,9 +2,9 @@ from flask import current_app as app, url_for
 from jinja2 import Markup, escape, Undefined
 import hashlib
 from goblet.memoize import memoize
+from goblet.encoding import decode as decode_
 import stat
 import time
-import chardet
 
 filters = {}
 def filter(name_or_func):
@@ -73,8 +73,7 @@ def strftime(timestamp, format):
 
 @filter
 def decode(data):
-    encoding = chardet.detect(data)['encoding'] or 'utf-8'
-    return data.decode(encoding)
+    return decode_(data)
 
 @filter
 def ornull(data):

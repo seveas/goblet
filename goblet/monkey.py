@@ -6,6 +6,7 @@ import pwd
 import pygments.lexers
 import stat
 from whelk import shell
+from goblet.encoding import decode
 
 class Repository(pygit2.Repository):
     @memoize
@@ -14,7 +15,7 @@ class Repository(pygit2.Repository):
         if not os.path.exists(desc):
             return ""
         with open(desc) as fd:
-            return fd.read()
+            return decode(fd.read())
     description = property(get_description)
 
     @memoize

@@ -1,5 +1,6 @@
 from flask import render_template, current_app, redirect, url_for, request, send_file
 from flask.views import View
+from goblet.encoding import decode
 import os
 import glob
 import pygit2
@@ -276,7 +277,7 @@ def fakediff(tree):
         if '\0' in data:
             # Binary file, ignore
             continue
-        data = data.decode(chardet.detect(data)['encoding'] or 'utf-8')
+        data = decode(data)
         lines = data.strip().split('\n')
         fstat[file.name] = {'+': len(lines), '-': 0}
         files[file.name] = [{

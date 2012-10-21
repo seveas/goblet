@@ -3,9 +3,9 @@ from jinja2 import Markup, escape
 import pygments
 import pygments.formatters
 import pygments.lexers
+from goblet.encoding import decode
 
 import re
-import chardet
 import markdown as markdown_
 import docutils.core
 
@@ -77,32 +77,24 @@ def image(repo, ref, path, entry):
 
 @renderer
 def plain(repo, ref, path, entry):
-    data = entry.to_object().data
-    encoding = chardet.detect(data)['encoding'] or 'utf-8'
-    data = escape(data.decode(encoding))
+    data = escape(decode(entry.to_object().data))
     data = re.sub(r'(https?://(?:[-a-zA-Z0-9\._~:/?#\[\]@!\'()*+,;=]+|&amp;)+)', Markup(r'<a href="\1">\1</a>'), data)
     return Markup(u"<pre>%s</pre>" % data)
 
 @renderer
 def code(repo, ref, path, entry, lexer, data=None):
-    data = data or entry.to_object().data
-    encoding = chardet.detect(data)['encoding'] or 'utf-8'
-    data = data.decode(encoding)
+    data = decode(data or entry.to_object().data)
     formatter = pygments.formatters.html.HtmlFormatter(linenos='inline', linenospecial=10, encoding='utf-8')
     return Markup(pygments.highlight(data, lexer, formatter).decode('utf-8'))
 
 @renderer
 def markdown(repo, ref, path, entry):
-    data = entry.to_object().data
-    encoding = chardet.detect(data)['encoding'] or 'utf-8'
-    data = data.decode(encoding)
+    data = decode(entry.to_object().data)
     return Markup(markdown_.Markdown(safe_mode="escape").convert(data))
 
 @renderer
 def rest(repo, ref, path, entry):
-    data = entry.to_object().data
-    encoding = chardet.detect(data)['encoding'] or 'utf-8'
-    data = data.decode(encoding)
+    data = decode(entry.to_object().data)
     settings = {
         'file_insertion_enabled': False,
         'raw_enabled': False,
