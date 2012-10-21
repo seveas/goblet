@@ -2,7 +2,7 @@
     background-color: #fcfcfa;
     color: rgb(78, 68, 60);
     background: url("/static/body.jpg") repeat scroll 0% 0% rgb(240, 239, 231);
-    font-family: "Droid Serif",Georgia,"Times New Roman",serif;
+    font-family: "Lato","Helvetica Neue",sans-serif;
     font-size: 15px;
     padding: 5px;
     margin: 0px;
@@ -76,7 +76,6 @@
 .goblet .lastchange {
     color: rgb(154, 153, 148);
     font-size: 75%;
-    font-family: 'Source Sans Pro', sans-serif;
 }
 .goblet .footer {
     color: rgb(154, 153, 148);
@@ -87,7 +86,6 @@
     border-bottom: solid 1px rgb(226, 224, 216);
     margin: 10px 0px;
     padding: 0px;
-    font-family: 'Source Sans Pro', sans-serif;
 }
 .goblet .tabnav-tabs {
     display: inline-block;
@@ -98,7 +96,7 @@
 }
 .goblet .tabnav-tabs > li .chzn-container {
     position: relative;
-    bottom: -10px;
+    bottom: -9px;
 }
 .goblet .tabnav-tabs > li .chzn-single {
     padding: 4px 8px;
@@ -140,9 +138,6 @@
 }
 .goblet #filetree .message {
     width: 99%;
-}
-.goblet #filetree tbody, .goblet .commit {
-    font-family: 'Source Sans Pro', sans-serif;
 }
 .goblet #filetree img {
     vertical-align: middle;
