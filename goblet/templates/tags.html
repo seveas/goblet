@@ -9,8 +9,8 @@
 <img class="gravatar" src="{{ tag.tagger.email|gravatar(36) }}" />
 {% endif %}
     <b>{{ name }}</b>{% if tag %} - {{ tag.message|shortmsg }}{% endif %}<br />
-    Download as <a rel="nofollow" href="{{ url_for('snapshot', repo=repo.name, ref=commit.hex, format='xz') }}">tar.xz</a> or
-    <a rel="nofollow" href="{{ url_for('snapshot', repo=repo.name, ref=commit.hex, format='zip') }}">zip</a> file.
+    Download as <a rel="nofollow" href="{{ url_for('snapshot', repo=repo.name, ref=name, format='xz') }}">tar.xz</a> or
+    <a rel="nofollow" href="{{ url_for('snapshot', repo=repo.name, ref=name, format='zip') }}">zip</a> file.
     <div class="commitdata">
     {% if tag.tagger %}
     <span class="author">{{ tag.tagger.name }} tagged {{ tag.tagger.time|humantime }}</span><br />

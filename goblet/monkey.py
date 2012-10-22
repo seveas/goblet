@@ -54,6 +54,9 @@ class Repository(pygit2.Repository):
     def branches(self):
         return sorted([x[11:] for x in self.listall_references() if x.startswith('refs/heads/')])
 
+    def tags(self):
+        return sorted([x[10:] for x in self.listall_references() if x.startswith('refs/tags/')])
+
     def commit_to_ref_hash(self):
         ret = defaultdict(list)
         for ref in self.listall_references():

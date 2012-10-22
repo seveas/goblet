@@ -101,16 +101,26 @@ class PathView(RepoBaseView):
                 tree = repo[repo.lookup_reference('refs/heads/%s' % ref).hex].tree
                 break
         else:
-            # OK, maybe a tag? XXX
-            # Or a commit
-            if '/' in path:
-                ref, path = path.split('/', 1)
+            # OK, maybe a tag?
+            for ref in sorted(repo.tags(), key = lambda x: -len(x)):
+                if path.startswith(ref):
+                    path = path.replace(ref, '')[1:]
+                    ref = repo.lookup_reference('refs/tags/%s' % ref).hex
+                    if repo[ref].type == pygit2.GIT_OBJ_TAG:
+                        tree = repo[repo[ref].target].tree
+                    else:
+                        tree = repo[ref].tree
+                    break
             else:
-                ref, path = path, ''
-            if ref in repo:
-                tree = repo[ref].tree
-            else:
-                raise NotFound("No such commit/ref")
+                # Or a commit
+                if '/' in path:
+                    ref, path = path.split('/', 1)
+                else:
+                    ref, path = path, ''
+                try:
+                    tree = repo[ref].tree
+                except (KeyError, ValueError):
+                    raise NotFound("No such commit/ref")
 
         # Remainder is path
         path_ = path.split('/')
@@ -191,7 +201,16 @@ class RefView(RepoBaseView):
         except KeyError:
             pass
         try:
-            return repo[ref]
+            ref = repo.lookup_reference('refs/tags/' + ref).hex
+        except KeyError:
+            pass
+        try:
+            obj = repo[ref]
+            if obj.type == pygit2.GIT_OBJ_TAG:
+                obj = repo[obj.target]
+            if obj.type != pygit2.GIT_OBJ_COMMIT:
+                raise NotFound("No such commit/ref")
+            return obj
         except (KeyError, ValueError):
             raise NotFound("No such commit/ref")
 
