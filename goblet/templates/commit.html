@@ -38,6 +38,9 @@
 <div class="blob">
 <h2><img src="{{ file_icon(file[1]) }}" /> <a href="{{ tree_link(repo, commit.hex, path, file[1]) }}">{{ file[1] }}</a></h2>
 <table class="blobdiff">
+{% if not formatdiff[file[1]] %}
+<tr><td class="lineno">&nbsp;</td><td class="lineno">&nbsp;</td><td><pre>Binary file change</pre></td></tr>
+{% endif %}
 {% for hunk in formatdiff[file[1]] %}
 {% set old = hunk.old_start %}
 {% set new = hunk.new_start %}

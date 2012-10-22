@@ -244,6 +244,7 @@
 }
 .blobdiff .lineno {
     background-color: rgb(226, 224, 216);
+    width: 3em;
 }
 .pagelink-prev {
     padding: 8px 10px;

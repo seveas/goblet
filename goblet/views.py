@@ -297,7 +297,7 @@ def realdiff(diff):
     for file in diff.changes['files']:
         files[file[1]] = []
         stat[file[1]] = {'-': 0, '+': 0}
-    for hunk in diff.changes['hunks']:
+    for hunk in diff.changes.get('hunks', []):
         files[hunk.new_file].append(hunk)
         stat[hunk.new_file]['-'] += len([x for x in hunk.data if x[1] == pygit2.GIT_DIFF_LINE_DELETION])
         stat[hunk.new_file]['+'] += len([x for x in hunk.data if x[1] == pygit2.GIT_DIFF_LINE_ADDITION])
