@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block title %}{{ repo.name }} &middot; {% block subtitle %}{% endblock %}{% endblock %}
 {% block content %}
 <h2><a href="{{ url_for('repo', repo=repo.name) }}">{{ repo.name }}</a> <span class="owner">by {{ repo.owner }}</span></h2>
 {{ repo.description }} {% if readme %}[<a href="#readme">read more</a>]{% endif %}
