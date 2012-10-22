@@ -265,3 +265,9 @@
 .goblet pre.literal-block {
     padding: 5px;
 }
+.goblet .blob .actions {
+    display: inline-block;
+    float: right;
+    font-weight: normal;
+    font-size: 15px;
+}

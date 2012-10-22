@@ -43,6 +43,7 @@ goblet.filters.register_filters(app)
 def inject_functions():
     return {
         'tree_link': v.tree_link,
+        'raw_link': v.raw_link,
         'file_icon': v.file_icon,
         'render':    goblet.render.render,
         'decode':    decode,

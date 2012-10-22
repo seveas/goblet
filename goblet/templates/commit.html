@@ -36,7 +36,12 @@
 </h2>
 {% for file in diff.changes['files'] %}
 <div class="blob">
-<h2><img src="{{ file_icon(file[1]) }}" /> <a href="{{ tree_link(repo, commit.hex, path, file[1]) }}">{{ file[1] }}</a></h2>
+<h2><img src="{{ file_icon(file[1]) }}" /> <a href="{{ tree_link(repo, commit.hex, path, file[1]) }}">{{ file[1] }}</a>
+<span class="actions">
+<a href="{{ tree_link(repo, commit.hex, path, file[1]) }}">view</a> |
+<a href="{{ raw_link(repo, commit.hex, path, file[1]) }}">raw</a> | blame | history
+</span>
+</h2>
 <table class="blobdiff">
 {% if not formatdiff[file[1]] %}
 <tr><td class="lineno">&nbsp;</td><td class="lineno">&nbsp;</td><td><pre>Binary file change</pre></td></tr>
