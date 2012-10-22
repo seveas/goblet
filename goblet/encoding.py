@@ -1,6 +1,8 @@
 import chardet
 
 def decode(data, encoding=None):
+    if isinstance(data, unicode):
+        return data
     if encoding:
         return data.decode(encoding)
     try:

@@ -11,6 +11,7 @@ import goblet.filters
 import goblet.views as v
 import goblet.json_views as j
 import goblet.render
+from goblet.encoding import decode
 
 class Defaults:
     REPO_ROOT      = git_checkout and os.path.dirname(git_checkout) or '/srv/git'
@@ -44,6 +45,7 @@ def inject_functions():
         'tree_link': v.tree_link,
         'file_icon': v.file_icon,
         'render':    goblet.render.render,
+        'decode':    decode,
     }
 
 # URL structure
