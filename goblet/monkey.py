@@ -7,6 +7,7 @@ import pygments.lexers
 import stat
 from whelk import shell
 from goblet.encoding import decode
+from collections import defaultdict
 
 class Repository(pygit2.Repository):
     def __init__(self, path):
@@ -52,6 +53,21 @@ class Repository(pygit2.Repository):
 
     def branches(self):
         return sorted([x[11:] for x in self.listall_references() if x.startswith('refs/heads/')])
+
+    def commit_to_ref_hash(self):
+        ret = defaultdict(list)
+        for ref in self.listall_references():
+            if ref.startswith('refs/remotes/'):
+                continue
+            if ref.startswith('refs/tags/'):
+                obj = self[self.lookup_reference(ref).hex]
+                if obj.type == pygit2.GIT_OBJ_COMMIT:
+                    ret[obj.hex].append(('tag', ref[10:]))
+                else:
+                    ret[self[self[obj.target].hex].hex].append(('tag', ref[10:]))
+            else:
+                ret[self.lookup_reference(ref).hex].append(('head', ref[11:]))
+        return ret
 
     def symref(self, hex):
         if hasattr(hex, 'hex'):

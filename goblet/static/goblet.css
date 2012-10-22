@@ -271,3 +271,14 @@
     font-weight: normal;
     font-size: 15px;
 }
+.goblet .ref {
+    padding: 0px 3px;
+    border-radius: 3px;
+    font-size: 80%;
+}
+.goblet .ref_head {
+    background-color: rgb(221, 255, 221);
+}
+.goblet .ref_tag {
+    background-color: rgb(255, 255, 204);
+}

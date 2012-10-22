@@ -201,6 +201,7 @@ class LogView(RefView):
 
     def handle_request(self, repo, ref=None):
         ref = self.lookup_ref(repo, ref)
+        refs = repo.commit_to_ref_hash()
         page = 1
         try:
             page = int(request.args['page'])
@@ -215,7 +216,7 @@ class LogView(RefView):
         if log[-1].parents:
             next_page = page + 1
         shas = [x.hex for x in log]
-        return {'ref': repo.symref(ref), 'log': log, 'shas': shas, 'next_page': next_page, 'prev_page': prev_page}
+        return {'ref': repo.symref(ref), 'log': log, 'shas': shas, 'refs': refs, 'next_page': next_page, 'prev_page': prev_page}
 
 snapshot_formats = {
     'zip': ('zip', None,            'zip'    ),
@@ -255,7 +256,6 @@ class CommitView(RefView):
         ref = self.lookup_ref(repo, ref)
         if not ref.parents:
             diff = {'changes': {'files': [(None, x) for x in repo.ls_tree(ref.tree)]}}
-            print diff
             diff_, stat = fakediff(ref.tree)
         else:
             diff = ref.parents[0].tree.diff(ref.tree)
