@@ -211,8 +211,8 @@
 .goblet .show_long:hover {
     text-decoration: underline;
 }
-.highlight .lineno { color: rgb(154, 153, 148); }
-.highlight .special { color: rgb(78, 68, 60); }
+.goblet .highlight .lineno { color: rgb(154, 153, 148); }
+.goblet .highlight .special { color: rgb(78, 68, 60); }
 
 .goblet .commitdate {
     border: solid 1px rgb(226, 224, 216);
@@ -228,37 +228,37 @@
     border-spacing: 0px;
     border-collapse: collapse;
 }
-.blobdiff td {
+.goblet .blobdiff td {
     font-size: 12px;
     padding: 0px 8px;
     line-height: 150%;
 }
-.deletion .diffcontent {
+.goblet .deletion .diffcontent {
     background-color: rgb(255, 221, 221);
 }
-.addition .diffcontent {
+.goblet .addition .diffcontent {
     background-color: rgb(221, 255, 221);
 }
-.blobdiff tr:hover, .blobdiff tr:hover * {
+.goblet .blobdiff tr:hover, .blobdiff tr:hover * {
     background-color: rgb(255, 255, 204);
 }
-.blobdiff .lineno {
+.goblet .blobdiff .lineno {
     background-color: rgb(226, 224, 216);
     width: 3em;
 }
-.pagelink-prev {
+.goblet .pagelink-prev {
     padding: 8px 10px;
     background-color: rgb(226,224,216);
     line-height: 150%;
     border-radius: 5px 0 0 5px;
 }
-.pagelink-next {
+.goblet .pagelink-next {
     padding: 8px 10px;
     background-color: rgb(226,224,216);
     line-height: 150%;
     border-radius: 0 5px 5px 0;
 }
-.pagination {
+.goblet .pagination {
     margin-top: 25px;
     margin-bottom: 25px;
 }
