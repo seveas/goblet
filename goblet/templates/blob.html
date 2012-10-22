@@ -1,6 +1,6 @@
 {% extends "repo_base.html" %}
 {% block repo_content %}
-<h2><a href="{{ url_for('repo', repo=repo.name) }}">{{ repo.name }}</a> / {{ path }}</h2>
+<h2><a href="{{ url_for('repo', repo=repo.name) }}">{{ repo.name }}</a> / {% if folder %}<a href="{{ url_for('tree', repo=repo.name, path='%s/%s' % (ref,folder)) }}">{{ folder }}</a>/{{ file.name }}{% else %}{{ path }}{% endif %}</h2>
 <div class="blob">
 <h2><img src="{{ file_icon(file) }}" /> {{ file.name }}</h2>
 <div class="blob-inner">

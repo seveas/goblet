@@ -151,7 +151,8 @@ class BlobView(PathView):
 
     def handle_request(self, repo, path):
         ref, path, tree, file = self.split_ref(repo, path, expects_file=True)
-        return {'tree': tree, 'ref': ref, 'path': path, 'file': file}
+        folder = '/' in path and path[:path.rfind('/')] or None
+        return {'tree': tree, 'ref': ref, 'path': path, 'file': file, 'folder': folder}
 
 class RawView(PathView):
     template = None
