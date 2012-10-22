@@ -282,3 +282,6 @@
 .goblet .ref_tag {
     background-color: rgb(255, 255, 204);
 }
+.goblet .lastchange img {
+    border-radius: 3px;
+}
