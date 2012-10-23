@@ -5,7 +5,7 @@
 <div class="commit">
 <div class="commitmsg">
 <img class="gravatar" src="{{ commit.author.email|gravatar(36) }}" />
-<a href="{{ url_for('commit', repo=repo.name, ref=commit.hex) }}">{{ commit.message|shortmsg }}</a>
+<a href="{{ url_for('commit', repo=repo.name, ref=commit.hex) }}">{{ commit.message|shortmsg }}</a> <span class="commitdata">(<a href="{{ url_for('patch', repo=repo.name, ref=commit.hex) }}">patch</a>)</span>
 {{ commit.message|longmsg }}
 {% if commit.parents %}
 <table>

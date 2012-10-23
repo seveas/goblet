@@ -281,6 +281,13 @@ class CommitView(RefView):
             diff_, stat = realdiff(diff)
         return {'commit': ref, 'diff': diff, 'formatdiff': diff_, 'stat': stat}
 
+class PatchView(RefView):
+    def handle_request(self, repo, ref=None):
+        ref = self.lookup_ref(repo, ref)
+        # XXX port to pygit2
+        data = repo.git('format-patch', '--stdout', '%s^..%s' % (ref.hex, ref.hex)).stdout
+        return (data, 200, [{'Content-Type': 'text/plain', 'Content-Encoding': 'utf-8'}])
+
 def fakediff(tree):
     files = {}
     fstat = {}
