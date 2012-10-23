@@ -102,7 +102,7 @@ def rest(repo, ref, path, entry):
         'report_level': 5,
     }
     data = docutils.core.publish_parts(data,settings_overrides=settings,writer_name='html')
-    return Markup(data['body'].decode('utf-8'))
+    return Markup(data['body'])
 
 @renderer
 def binary(repo, ref, path, entry):
