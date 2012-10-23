@@ -112,6 +112,7 @@ are only two settings that are needed:
 
   REPO_ROOT: the path to a directory containing all your repositories
   CACHE_ROOT: where goblet should store snapshots of cache repositories
+  CLONE_URLS_BASE: the root urls where people can clone your repositories
 
 An example configuration is shipped in the example_config file. One particular
 setting to note is USE_X_ACCEL_REDIRECT. Under nginx, X-Sendfile (as used for
@@ -132,3 +133,7 @@ directories and the .git config is used if it is available.
      The owner of a repository is read from the goblet.owner configuration
      variable or the file's owner on the filesystem
 
+  clone urls
+     The clone urls will be generated from the CLONE_URLS_BASE setting and the
+     repository name. If you want to override the clone url, you can set the
+     goblet.clone_url_$protocol variables.

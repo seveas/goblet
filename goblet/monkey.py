@@ -38,6 +38,25 @@ class Repository(pygit2.Repository):
     name = property(get_name)
 
     @memoize
+    def get_clone_urls(self):
+        clone_base = current_app.config.get('CLONE_URLS_BASE', {})
+        ret = {}
+        for proto in ('git', 'ssh', 'http'):
+            try:
+                ret[proto] = self.config['goblet.cloneurl%s' % proto]
+                continue
+            except KeyError:
+                pass
+            if proto not in clone_base:
+                continue
+            if self.config['core.bare']:
+                ret[proto] = clone_base[proto] + os.path.basename(self.path)
+            else:
+                ret[proto] = clone_base[proto] + os.path.basename(os.path.dirname(os.path.dirname(self.path)))
+        return ret
+    clone_urls = property(get_clone_urls)
+
+    @memoize
     def get_owner(self):
         try:
             return self.config['goblet.owner']

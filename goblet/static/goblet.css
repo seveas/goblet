@@ -285,3 +285,31 @@
 .goblet .lastchange img {
     border-radius: 3px;
 }
+.goblet .clonelinks {
+    margin-top: 1em;
+}
+.goblet .clonelinks ul {
+    display: inline;
+}
+.goblet .clonelinks li {
+    display: inline;
+    border-radius: 3px;
+    color: rgb(78, 68, 60);
+    font-weight: bold;
+    background-color: rgb(226, 224, 216);
+    padding: 0px 5px;
+    margin: 2px;
+}
+.goblet .clonelinks li:hover {
+    cursor: pointer;
+}
+.goblet .clonelinks li span {
+    display: none;
+}
+.goblet .clonelinks input {
+    border-color: rgb(226, 224, 216);
+    border-width: 1px;
+    border-radius: 50px;
+    padding: 0px 10px;
+    width: 400px;
+}

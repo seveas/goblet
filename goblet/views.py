@@ -154,7 +154,7 @@ class RepoView(TreeView):
         for file in tree:
             if re.match(r'^readme(?:.(?:txt|rst|md))?$', file.name, flags=re.I):
                 readme = file
-        return {'readme': readme, 'tree': tree, 'ref': repo.symref(repo.head), 'path': ''}
+        return {'readme': readme, 'tree': tree, 'ref': repo.symref(repo.head), 'path': '', 'show_clone_urls': True}
 
 class BlobView(PathView):
     template_name = 'blob.html'

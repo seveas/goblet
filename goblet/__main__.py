@@ -20,6 +20,7 @@ class Defaults:
     USE_X_ACCEL_REDIRECT = False
     ADMINS         = []
     SENDER         = 'webmaster@localhost'
+    CLONE_URLS_BASE = {}
 
 class Goblet(Flask):
     def __call__(self, environ, start_response):

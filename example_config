@@ -1,12 +1,19 @@
 # Goblet config
 REPO_ROOT      = '/path/to/repo_root'
 CACHE_ROOT     = '/tmp/goblet-snapshot'
+CLONE_URLS_BASE = {
+    'git': 'git://example.com/',
+    'http:' 'https://example.com/git/',
+#   Don't show ssh urls
+#    'ssh': 'example.com:/srv/gitroot',
+}
+
+# Logger settings
 ADMINS         = ['your_mailaddress@example.com']
 SENDER         = 'webmaster@localhost'
 
 # Flask config, see
 # http://flask.pocoo.org/docs/config/#builtin-configuration-values
-
 DEBUG          = True
 USE_X_SENDFILE = True
 # This is needed to make X-Sendfile work under nginx

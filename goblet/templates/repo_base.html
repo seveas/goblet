@@ -3,6 +3,18 @@
 {% block content %}
 <h2><a href="{{ url_for('repo', repo=repo.name) }}">{{ repo.name }}</a> <span class="owner">by {{ repo.owner }}</span></h2>
 {{ repo.description }} {% if readme %}[<a href="#readme">read more</a>]{% endif %}
+{% if show_clone_urls and repo.clone_urls %}
+<div class="clonelinks">
+Clone from
+<ul class="cloneurls">
+  {% for type, url in repo.clone_urls.items() %}<li class="urllink">{{ type }}<span>{{ url }}</li>{% endfor %}
+</ul>
+<input type="text" id="cloneurl" value="uhh..." />
+</div>
+<script type="text/javascript">
+init_clone_urls();
+</script>
+{% endif %}
 <div class="tabnav">
   <ul class="tabnav-tabs">
     {% if commit %}
