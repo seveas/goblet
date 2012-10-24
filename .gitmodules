@@ -1,3 +1,0 @@
-[submodule "chosen"]
-	path = chosen
-	url = git://github.com/harvesthq/chosen.git
