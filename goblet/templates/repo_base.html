@@ -28,16 +28,14 @@ init_clone_urls();
     <li><a class="tabnav-tab {% if log or commit %}selected{% endif %}" href="{{ url_for('commits', repo=repo.name) }}">Commits</a></li>
     {% endif %}
     <li><a class="tabnav-tab {% if tags %}selected{% endif %}" href="{{ url_for('tags', repo=repo.name) }}">Tags</a></li>
-    <li class="selector">
-      <select id="branches" class="chzn-select">
+    <li class="selector"><select id="branches" class="chzn-select">
         {% if symref not in repo.branches() %}
         <option value="{{ symref }}" selected="selected">commit {{ symref[:7] }}</option>
         {% endif %}
         {% for branch in repo.branches() %}
         <option value="{{ branch }}" {% if branch == symref %}selected="selected"{% endif %}>{{ branch }}</option>
         {% endfor %}
-      </select>
-    </li>
+      </select></li>
   </ul>
 </div>
 {% block repo_content %}
@@ -45,5 +43,8 @@ init_clone_urls();
 <script type="text/javascript">
 $(".chzn-select").chosen();
 $("#branches").change(switch_branch);
+var x1 = $("#branches_chzn").offset().top;
+var x2 = $(".tabnav-tabs a").first().offset().top;
+$("#branches_chzn").css({bottom: (x1-x2) + 'px'});
 </script>
 {% endblock %}

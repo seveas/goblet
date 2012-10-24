@@ -22,12 +22,9 @@ function switch_branch() {
         url = '/' + repo + '/tree/' + branch + '/'
     }
     window.location = url;
-    console.log(action + " " + url);
 }
 function init_clone_urls() {
-    console.log("moo");
     $('.urllink').each(function(index, elt) {
-        console.log(elt);
         $(elt).click(function() {
             $('#cloneurl').attr('value', $(this).children('span').html());
         });

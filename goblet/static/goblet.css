@@ -94,13 +94,6 @@
 .goblet .tabnav-tabs > li {
     display: inline-block;
 }
-.goblet .tabnav-tabs > li .chzn-container {
-    position: relative;
-    bottom: -9px;
-}
-.goblet .tabnav-tabs > li .chzn-single {
-    padding: 4px 8px;
-}
 .goblet .tabnav-tabs a {
     border-color: rgb(226, 224, 216);
     border-radius: 3px 3px 0px 0px;
