@@ -84,7 +84,7 @@ def plain(repo, ref, path, entry):
 @renderer
 def code(repo, ref, path, entry, lexer, data=None):
     data = decode(data or entry.to_object().data)
-    formatter = pygments.formatters.html.HtmlFormatter(linenos='inline', linenospecial=10, encoding='utf-8')
+    formatter = pygments.formatters.html.HtmlFormatter(linenos='inline', linenospecial=10, encoding='utf-8', anchorlinenos=True, lineanchors='l')
     return Markup(pygments.highlight(data, lexer, formatter).decode('utf-8'))
 
 @renderer

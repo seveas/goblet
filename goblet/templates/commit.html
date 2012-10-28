@@ -39,7 +39,8 @@
 <div class="blob">
 <h2><img src="{{ file_icon(file[1]) }}" /> <a href="{{ tree_link(repo, commit.hex, path, file[1]) }}">{{ file[1] }}</a>
 <span class="actions">
-<a href="{{ tree_link(repo, commit.hex, path, file[1]) }}">view</a> |
+{% set file_link = tree_link(repo, commit.hex, path, file[1]) %}
+<a href="{{ file_link }}">view</a> |
 <a href="{{ raw_link(repo, commit.hex, path, file[1]) }}">raw</a> | blame | history
 </span>
 </h2>
@@ -53,13 +54,13 @@
 <tr><td class="lineno">&hellip;</td><td class="lineno">&hellip;</td><td><pre>{{ hunk.header }}</pre></td></tr>
 {% for line in hunk.data %}
 {% if line[1] == 32 %}
-<tr class="context"><td class="lineno">{{ old }}</td><td class="lineno">{{ new }}</td><td class="diffcontent"><pre>{{ decode(line[0]) }}</pre></td></tr>
+<tr class="context"><td class="lineno">{{ old }}</td><td class="lineno"><a href="{{ file_link }}#l-{{ new }}">{{ new }}</a></td><td class="diffcontent"><pre>{{ decode(line[0]) }}</pre></td></tr>
 {% set old = old + 1 %}{% set new = new +1 %}
 {% elif line[1] == 45 %}
 <tr class="deletion"><td class="lineno">{{ old }}</td><td class="lineno">&nbsp;</td><td class="diffcontent"><pre>{{ decode(line[0]) }}</pre></td></tr>
 {% set old = old + 1 %}
 {% elif line[1] == 43 %}
-<tr class="addition"><td class="lineno">&nbsp;</td><td class="lineno">{{ new }}</td><td class="diffcontent"><pre>{{ decode(line[0]) }}</pre></td></tr>
+<tr class="addition"><td class="lineno">&nbsp;</td><td class="lineno"><a href="{{ file_link }}#l-{{ new }}">{{ new }}</a></td><td class="diffcontent"><pre>{{ decode(line[0]) }}</pre></td></tr>
 {% set new = new + 1 %}
 {% elif line[1] == 66 %}
 <tr><td class="lineno">&nbsp;</td><td class="lineno">&nbsp;</td>(Binary change)</td></tr>
