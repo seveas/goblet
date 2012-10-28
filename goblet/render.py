@@ -4,17 +4,24 @@ import pygments
 import pygments.formatters
 import pygments.lexers
 from goblet.encoding import decode
+from goblet.views import blob_link
 
 import re
 import markdown as markdown_
 import docutils.core
+import time
 
 renderers = {}
 image_exts = ('.gif', '.png', '.bmp', '.tif', '.tiff', '.jpg', '.jpeg', 'ppm',
     'pnm', 'pbm', 'pgm', 'webp')
 
-def render(repo, ref, path, entry, no_highlight=False):
+def render(repo, ref, path, entry, no_highlight=False, blame=False):
     renderer = detect_renderer(entry)
+    if blame:
+        if renderer[0] in ('rest', 'markdown'):
+            renderer = ('code', pygments.get_lexer_for_filename(path), None, True)
+        elif renderer[0] == 'code':
+            renderer = list(renderer) + [None, True]
     if renderer[0] == 'code' and no_highlight:
         renderer = ('plain',)
     return renderers[renderer[0]](repo, ref, path, entry, *renderer[1:])
@@ -82,10 +89,26 @@ def plain(repo, ref, path, entry):
     return Markup(u"<pre>%s</pre>" % data)
 
 @renderer
-def code(repo, ref, path, entry, lexer, data=None):
+def code(repo, ref, path, entry, lexer, data=None, blame=False):
     data = decode(data or entry.to_object().data)
     formatter = pygments.formatters.html.HtmlFormatter(linenos='inline', linenospecial=10, encoding='utf-8', anchorlinenos=True, lineanchors='l')
-    return Markup(pygments.highlight(data, lexer, formatter).decode('utf-8'))
+    html = Markup(pygments.highlight(data, lexer, formatter).decode('utf-8'))
+    if blame:
+        blame = repo.blame(ref, path)
+        blame.append(None)
+        def replace(match):
+            line = int(match.group(2)) - 1
+            _, orig_line, _, commit = blame[line]
+            link = blob_link(repo, commit['hex'], path)
+            if blame[-1] == commit['hex']:
+                return Markup('        %s<a href="%s#l-%s">%s</a>' % (match.group(1), link, orig_line, match.group(2)))
+            link2 = url_for('commit', repo=repo.name, ref=commit['hex'])
+            blame[-1] = commit['hex']
+            return Markup('<a href="%s" title="%s (%s)">%s</a> %s<a href="%s#l-%s">%s</a>' % (link2, commit['summary'], 
+                time.strftime('%Y-%m-%d', time.gmtime(int(commit['committer-time']))),
+                commit['hex'][:7], match.group(1), link, orig_line, match.group(2)))
+        html = re.sub(r'(<a name="l-(\d+)"></a><span class="[^"]+">\s*)(\d+)', replace, html)
+    return html
 
 @renderer
 def markdown(repo, ref, path, entry):

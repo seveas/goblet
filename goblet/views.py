@@ -344,9 +344,17 @@ def tree_link(repo, ref, path, file):
     if stat.S_ISREG(file.filemode):
         return url_for('blob', repo=repo.name, path=tree_path)
 
+def blob_link(repo, ref, path, file=None):
+    parts = [x for x in (ref, path, file) if x]
+    return url_for('blob', repo=repo.name, path='/'.join(parts))
+
 def raw_link(repo, ref, path, file=None):
     parts = [x for x in (ref, path, file) if x]
     return url_for('raw', repo=repo.name, path='/'.join(parts))
+
+def blame_link(repo, ref, path, file=None):
+    parts = [x for x in (ref, path, file) if x]
+    return url_for('blame', repo=repo.name, path='/'.join(parts))
 
 def file_icon(file):
     mode = getattr(file, 'filemode', stat.S_IFREG)

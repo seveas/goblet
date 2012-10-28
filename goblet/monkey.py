@@ -166,7 +166,27 @@ class Repository(pygit2.Repository):
         return files
 
     def blame(self, commit, path):
-        contents = self.git('blame', '-p', path)
+        if hasattr(commit, 'hex'):
+            commit = commit.hex
+        contents = self.git('blame', '-p', commit, '--', path).stdout.splitlines()
+        commits = {}
+        last_commit = None
+        lines = []
+        orig_line = line_now = 0
+        for line in contents:
+            if not last_commit:
+                last_commit, orig_line, line_now = line.split()[:3]
+                if last_commit not in commits:
+                    commits[last_commit] = {'hex': last_commit}
+            elif line.startswith('\t'):
+                lines.append((line[1:], orig_line, line_now, commits[last_commit]))
+                last_commit = None
+            elif line == 'boundary':
+                commits[last_commit]['previous'] = None
+            else:
+                key, val = line.split(None, 1)
+                commits[last_commit][key] = val
+        return lines
 
     def git(self, *args):
         return shell.git('--git-dir', self.path, *args)

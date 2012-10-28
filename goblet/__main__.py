@@ -43,11 +43,13 @@ goblet.filters.register_filters(app)
 @app.context_processor
 def inject_functions():
     return {
-        'tree_link': v.tree_link,
-        'raw_link': v.raw_link,
-        'file_icon': v.file_icon,
-        'render':    goblet.render.render,
-        'decode':    decode,
+        'tree_link':  v.tree_link,
+        'raw_link':   v.raw_link,
+        'blame_link': v.blame_link,
+        'blob_link': v.blob_link,
+        'file_icon':  v.file_icon,
+        'render':     goblet.render.render,
+        'decode':     decode,
     }
 
 # URL structure
@@ -55,6 +57,7 @@ app.add_url_rule('/', view_func=v.IndexView.as_view('index'))
 app.add_url_rule('/<repo>/', view_func=v.RepoView.as_view('repo'))
 app.add_url_rule('/<repo>/tree/<path:path>/', view_func=v.TreeView.as_view('tree'))
 app.add_url_rule('/j/<repo>/treechanged/<path:path>/', view_func=j.TreeChangedView.as_view('treechanged'))
+app.add_url_rule('/<repo>/blame/<path:path>', view_func=v.BlobView.as_view('blame'))
 app.add_url_rule('/<repo>/blob/<path:path>', view_func=v.BlobView.as_view('blob'))
 app.add_url_rule('/<repo>/raw/<path:path>', view_func=v.RawView.as_view('raw'))
 app.add_url_rule('/<repo>/patch/<path:ref>/', view_func=v.PatchView.as_view('patch'))
