@@ -142,51 +142,40 @@ class Repository(pygit2.Repository):
 
     def tree_lastchanged(self, commit, path):
         """Get a dict containing oid and commit that last changed files in a directory"""
-        files = dict([(x.name, {'id': x.oid, 'hex': x.hex, 'commit': None}) for x in get_tree(commit.tree, path)])
-        last_commit = commit
+        files = dict([(x.name, {'id': x.oid, 'hex': x.hex, 'commit': None, 'addition': True}) for x in get_tree(commit.tree, path)])
+        todo = files.keys()
+        commit_ = commit
 
         for commit in self.walk(commit.hex, pygit2.GIT_SORT_TIME):
             tree = get_tree(commit.tree, path)
-
-            # No tree? Last commit introduced us!
             if not tree:
-                for file in files:
-                    if not files[file]['commit']:
-                        files[file]['commit'] = last_commit
-                break
-
-            # Find changes
-            done = 0
-            for file in files:
-                if files[file]['commit']:
-                    done += 1
+                continue
+            # If we don't have the tree, consider this as possible addition point
+            addition = None
+            for file in todo[:]:
+                if file not in tree:
                     continue
-                if file not in tree or tree[file].oid != files[file]['id']:
-                    files[file]['commit'] = last_commit
-                    done += 1
+                for parent in commit.parents:
+                    ptree = get_tree(parent.tree, path)
+                    if file in ptree and tree[file].oid == ptree[file].oid:
+                        break
+                else:
+                    files[file]['commit'] = commit
+                    todo.remove(file)
 
-            # Are we done yet?
-            last_commit = commit
-            if done == len(files):
-                break
-
-        # Any files that still don't have a commit were last changed in
-        # the initial commit
-        for file in files:
-            if not files[file]['commit']:
-                files[file]['commit'] = last_commit
-        
         return files
+
+    def blame(self, commit, path):
+        contents = self.git('blame', '-p', path)
 
     def git(self, *args):
         return shell.git('--git-dir', self.path, *args)
 
 def get_tree(tree, path):
-    try:
-        for dir in path:
-            tree = tree[dir].to_object()
-    except KeyError:
-        return None
+    for dir in path:
+        if dir not in tree:
+            return None
+        tree = tree[dir].to_object()
     return tree
 
 pygit2.Repository = Repository

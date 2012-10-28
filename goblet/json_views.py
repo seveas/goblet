@@ -8,7 +8,7 @@ class TreeChangedView(PathView):
         ref, path, tree, _ = self.split_ref(repo, path)
         if ref not in repo:
             ref = repo.lookup_reference('refs/heads/%s' % ref).hex
-        lastchanged = repo.tree_lastchanged(repo[ref], path and path.split('/') or [])
+        lastchanged = repo.tree_lastchanged(repo[ref], path and tuple(path.split('/') or []))
         ret = {}
         for file, data in lastchanged.iteritems():
             ret[file] = [data['hex'][:7], humantime(data['commit'].commit_time), data['commit'].hex, escape(shortmsg(data['commit'].message))]
