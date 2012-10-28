@@ -22,6 +22,7 @@
 <span class="author">{{ commit.author.name }} authored {{ commit.author.time|humantime }}</span>
 {% if commit.committer.email != commit.author.email %}
 <br /><span class="committer">{{ commit.committer.name }} committed {{ commit.committer.time|humantime }}</span>
+{% for ack, who in commit.message|acks %}<br /><span class="committer">{{ ack }}: {{ who|join(", ") }}</span>{% endfor %}
 {% endif %}
 </div>
 </div>

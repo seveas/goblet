@@ -1,10 +1,12 @@
 from flask import current_app as app, url_for
 from jinja2 import Markup, escape, Undefined
+from collections import defaultdict
 import hashlib
 from goblet.memoize import memoize
 from goblet.encoding import decode as decode_
 import stat
 import time
+import re
 
 filters = {}
 def filter(name_or_func):
@@ -62,10 +64,19 @@ def longmsg(message):
     short, long = message.split('\n', 1)
     if len(short) > 80:
         long = message
-    long = long.strip()
+    long = re.sub(r'^[-a-z]+-by:.*\n', '', long, flags=re.MULTILINE|re.I).strip() 
     if not long:
         return ""
     return Markup('<pre class="invisible">%s</pre>') % escape(long)
+
+@filter
+def acks(message):
+    acks = defaultdict(list)
+    for ack, who in re.findall(r'^([-a-z]+)-by:(.*?)(?:<.*)?\n', message, flags=re.MULTILINE|re.I):
+        ack = ack.lower().replace('-', ' ')
+        ack = ack[0].upper() + ack[1:] # Can't use title
+        acks[ack].append(who.strip())
+    return sorted(acks.items())
 
 @filter
 def strftime(timestamp, format):
