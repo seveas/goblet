@@ -23,15 +23,15 @@
 {% endfor %}
 </div>
 
-{% if pref_page or next_page %}
+{% if prev_page or next_page %}
 <div class="pagination">
 {% if prev_page -%}
-<a class="pagelink-prev " href="./?page={{ prev_page }}">« Newer</a>
+<a class="pagelink-prev " href="./?page={{ prev_page }}{% if request.args.q %}&amp;q={{ request.args.q }}{% endif %}">« Newer</a>
 {%- else -%}
 <span class="pagelink-prev disabled">« Newer</span>
 {%- endif -%}
 {%- if next_page -%}
-<a class="pagelink-next" href="./?page={{ next_page }}">Older »</a>
+<a class="pagelink-next" href="./?page={{ next_page }}{% if request.args.q %}&amp;q={{ request.args.q }}{% endif %}">Older »</a>
 {%- else -%}
 <span class="pagelink-next disabled">Older »</span>
 {%- endif -%}

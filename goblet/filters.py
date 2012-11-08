@@ -101,5 +101,9 @@ def ornull(data):
         data = getattr(data, attr, data)
     return Markup('"%s"') % data
 
+@filter
+def highlight(data, search):
+    return Markup(data).replace(Markup(search), Markup('<span class="searchresult">%s</span>' % Markup(search)))
+
 def register_filters(app):
     app.jinja_env.filters.update(filters)

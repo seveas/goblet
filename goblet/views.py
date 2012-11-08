@@ -27,6 +27,10 @@ class IndexView(TemplateView):
         root = current_app.config['REPO_ROOT']
         repos = glob.glob(os.path.join(root, '*.git')) + glob.glob(os.path.join(root, '*', '.git'))
         repos = [pygit2.Repository(x) for x in sorted(repos, key=lambda x:x.lower())]
+        for keyword in request.args.get('q', '').lower().split():
+            keyword = keyword.strip()
+            if keyword:
+                repos = [repo for repo in repos if keyword in repo.name.lower() or keyword in repo.description.lower()]
         return self.render({'repos': repos})
 
 class RepoBaseView(TemplateView):
@@ -71,6 +75,12 @@ class TagsView(RepoBaseView):
         tags = [x for x in tags if x[2].type == pygit2.GIT_OBJ_COMMIT]
         # Sort by tag-time or commit-time
         tags.sort(reverse=True, key=lambda t: t[1] and t[1].tagger and t[1].tagger.time or t[2].commit_time)
+        for keyword in request.args.get('q', '').lower().split():
+            keyword = keyword.strip()
+            if keyword:
+                tags = [tag for tag in tags if keyword in tag[0] or
+                        (tag[1] and keyword in tag[1].message) or
+                        ((tag[1] and tag[1].tagger) and (keyword in tag[1].tagger.name or keyword in tag[1].tagger.email))]
 
         page = 1
         try:
@@ -142,14 +152,42 @@ class PathView(RepoBaseView):
 
 class TreeView(PathView):
     template_name = 'tree.html'
+    results_per_page = 50
 
     def handle_request(self, repo, path):
         ref, path, tree, _ = self.split_ref(repo, path)
+        if 'q' in request.args:
+            return self.git_grep(repo, ref, path)
         return {'tree': tree, 'ref': ref, 'path': path}
+
+    def git_grep(self, repo, ref, path):
+        self.template_name = 'search.html'
+        results = list(repo.grep(ref, path, request.args['q']))
+
+        page = 1
+        try:
+            page = int(request.args['page'])
+        except (KeyError, ValueError):
+            pass
+        page = max(1,page)
+        next_page = prev_page = None
+        total = len(results)
+        if page > 1:
+            prev_page = page - 1
+        if total > self.results_per_page * page:
+            next_page = page + 1
+
+        start = (page-1) * self.results_per_page
+        end = min(start + 50, total)
+
+        return {'results': results[start:end], 'start': start+1, 'end': end, 'total': total,
+                'ref': ref.hex, 'path': path, 'next_page': next_page, 'prev_page': prev_page}
 
 class RepoView(TreeView):
     def handle_request(self, repo):
         tree = repo.head.tree
+        if 'q' in request.args:
+            return self.git_grep(repo, repo.head, '')
         readme = None
         for file in tree:
             if re.match(r'^readme(?:.(?:txt|rst|md))?$', file.name, flags=re.I):
@@ -231,7 +269,7 @@ class LogView(RefView):
         if page > 1:
             prev_page = page - 1
 
-        log = list(repo.get_commits(ref, skip=self.commits_per_page * (page-1), count=self.commits_per_page))
+        log = list(repo.get_commits(ref, skip=self.commits_per_page * (page-1), count=self.commits_per_page, search=request.args.get('q', '')))
         if log[-1].parents:
             next_page = page + 1
         shas = [x.hex for x in log]

@@ -1,0 +1,40 @@
+{% extends "repo_base.html" %}
+{% block subtitle %}Search{% endblock %}
+{% block repo_content %}
+<h2>Results {{ start }}..{{ end }} of {{ total }} for {{ request.args['q'] }}</h2> 
+
+{% for file, chunks in results %}
+<div class="blob">
+<h2><img src="{{ file_icon(file[1]) }}" /> <a href="{{ tree_link(repo, ref, path, file[1]) }}">{{ file[1] }}</a>
+<span class="actions">
+{% set file_link = tree_link(repo, ref, path, file[1]) %}
+<a href="{{ file_link }}">view</a> |
+<a href="{{ raw_link(repo, ref, path, file[1]) }}">raw</a> | blame | history
+</span>
+</h2>
+<table class="blobdiff">
+{% for chunk in chunks %}
+{% for lineno, line in chunk %}
+<tr><td class="lineno"><a href="{{ file_link }}#l-{{ lineno }}">{{ lineno }}</a></td><td class="diffcontent"><pre>{{ decode(line)|highlight(request.args['q']) }}</pre></td></tr>
+{% endfor %}
+<tr><td class="lineno">&hellip;</td><td>&nbsp;</td>
+{% endfor %}
+</table>
+</div>
+{% endfor %}
+
+{% if prev_page or next_page %}
+<div class="pagination">
+{% if prev_page -%}
+<a class="pagelink-prev " href="./?page={{ prev_page }}{% if request.args.q %}&amp;q={{ request.args.q }}{% endif %}">« Newer</a>
+{%- else -%}
+<span class="pagelink-prev disabled">« Newer</span>
+{%- endif -%}
+{%- if next_page -%}
+<a class="pagelink-next" href="./?page={{ next_page }}{% if request.args.q %}&amp;q={{ request.args.q }}{% endif %}">Older »</a>
+{%- else -%}
+<span class="pagelink-next disabled">Older »</span>
+{%- endif -%}
+</div>
+{% endif %}
+{% endblock %}

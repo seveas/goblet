@@ -23,8 +23,8 @@
 <body class="goblet" id="{% block bodyid %}goblet{% endblock %}">
   <header>
     <a href="/"><img src="/static/logo.png" width="110" height="46" alt="Git" /></a>
-      <form action="/search/" id="search">
-        <input id="search-text" name="search" placeholder="Search..." autocomplete="off" type="text" />
+      <form action="./" id="search">
+        <input id="search-text" name="q" placeholder="Search..." autocomplete="off" type="text" value="{{ request.args['q'] }}" />
      </form>
   </header>
 <div id="content">

@@ -306,3 +306,7 @@
     padding: 0px 10px;
     width: 400px;
 }
+.goblet .searchresult {
+    font-weight: bold;
+    color: rgb(241, 78, 50);
+}

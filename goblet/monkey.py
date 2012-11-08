@@ -108,8 +108,12 @@ class Repository(pygit2.Repository):
         except pygit2.GitError:
             return None
 
-    def get_commits(self, ref, skip, count):
-        for num, commit in enumerate(self.walk(ref.hex, pygit2.GIT_SORT_TIME)):
+    def get_commits(self, ref, skip, count, search=None):
+        num = 0
+        for commit in self.walk(ref.hex, pygit2.GIT_SORT_TIME):
+            if search and search not in commit.message:
+                continue
+            num += 1
             if num < skip:
                 continue
             if num >= skip + count:
@@ -187,6 +191,18 @@ class Repository(pygit2.Repository):
                 key, val = line.split(None, 1)
                 commits[last_commit][key] = val
         return lines
+
+    def grep(self, commit, path, query):
+        if hasattr(commit, 'hex'):
+            commit = commit.hex
+        results = self.git('grep', '-n', '--full-name', '-z', '-I', '-C1', '--heading', '--break', query, commit, '--', path).stdout.strip()
+        files = results.split('\n\n')
+        for file in files:
+            chunks = []
+            for chunk in [x.split('\n') for x in file.split('\n--\n')]:
+                chunks.append([line.split('\0') for line in chunk])
+            filename = chunks[0].pop(0)[0].split(':', 1)
+            yield filename, chunks
 
     def git(self, *args):
         return shell.git('--git-dir', self.path, *args)
