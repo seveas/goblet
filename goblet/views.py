@@ -147,6 +147,8 @@ class PathView(RepoBaseView):
                 raise NotFound("Not a folder")
             else:
                 tree = entry.to_object()
+        if expects_file and not file:
+            raise NotFound("No such file")
 
         return ref, path, tree, file
 
