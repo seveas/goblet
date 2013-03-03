@@ -1,8 +1,10 @@
 {% extends "repo_base.html" %}
 {% block subtitle %}Search{% endblock %}
 {% block repo_content %}
+{% if total == 0 %}
+<h2>No search results for {{ request.args['q'] }}</h2>
+{% else %}
 <h2>Results {{ start }}..{{ end }} of {{ total }} for {{ request.args['q'] }}</h2>
-
 {% for file, chunks in results %}
 <div class="blob">
 <h2><img src="{{ file_icon(file[1]) }}" /> <a href="{{ tree_link(repo, ref, path, file[1]) }}">{{ file[1] }}</a>
@@ -36,5 +38,6 @@
 <span class="pagelink-next disabled">Older »</span>
 {%- endif -%}
 </div>
+{% endif %}
 {% endif %}
 {% endblock %}

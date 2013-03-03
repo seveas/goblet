@@ -188,6 +188,8 @@ class Repository(pygit2.Repository):
         if hasattr(commit, 'hex'):
             commit = commit.hex
         results = self.git('grep', '-n', '--full-name', '-z', '-I', '-C1', '--heading', '--break', query, commit, '--', path).stdout.strip()
+        if not results:
+            raise StopIteration
         files = results.split('\n\n')
         for file in files:
             chunks = []
