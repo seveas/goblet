@@ -42,7 +42,7 @@
 <span class="actions">
 {% set file_link = tree_link(repo, commit.hex, path, file[1]) %}
 <a href="{{ file_link }}">view</a> |
-<a href="{{ raw_link(repo, commit.hex, path, file[1]) }}">raw</a> | blame | history
+<a href="{{ raw_link(repo, commit.hex, path, file[1]) }}">raw</a> | <a href="{{ blame_link(repo, commit.hex, path, file[1]) }}">blame</a> | history
 </span>
 </h2>
 <table class="blobdiff">
