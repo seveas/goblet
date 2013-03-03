@@ -88,7 +88,7 @@ def decode(data):
 
 @filter
 def ornull(data):
-    if hasattr(data, '__iter__'):
+    if isinstance(data, list):
         for d in data:
             if not isinstance(d, Undefined):
                 data = d

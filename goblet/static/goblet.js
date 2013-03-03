@@ -1,9 +1,9 @@
 function load_tree_log() {
     var logurl = '/j/' + repo + '/treechanged/' + (ref ? ref + '/' : '' ) + (path ? path + '/' : '');
     $.getJSON(logurl, success=function(data) {
-        $.each(data, function(key, val) {
-            $('#age_' + val[0]).html(val[1]);
-            $('#msg_' + val[0]).html('<a href="/' + repo + '/commit/' +  val[2] + '/">' + val[3] + '</a>');
+        $.each(data.files, function(file, id) {
+            $('#age_' + id[1]).html(data.commits[id[0]][0]);
+            $('#msg_' + id[1]).html('<a href="/' + repo + '/commit/' + id[0] + '/">' + data.commits[id[0]][1] + '</a>');
         });
     });
 }

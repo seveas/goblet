@@ -12,9 +12,15 @@ from collections import defaultdict
 class Repository(pygit2.Repository):
     def __init__(self, path):
         if os.path.exists(path):
-            return super(Repository, self).__init__(path)
+            super(Repository, self).__init__(path)
         else:
-            return super(Repository, self).__init__(path + '.git')
+            super(Repository, self).__init__(path + '.git')
+        self.gpath = os.path.join(self.path, 'goblet')
+        self.cpath = os.path.join(self.gpath, 'cache')
+        if not os.path.exists(self.gpath):
+            os.mkdir(self.gpath)
+        if not os.path.exists(self.cpath):
+            os.mkdir(self.cpath)
 
     @memoize
     def get_description(self):
@@ -145,29 +151,15 @@ class Repository(pygit2.Repository):
         return ret
 
     def tree_lastchanged(self, commit, path):
-        """Get a dict containing oid and commit that last changed files in a directory"""
-        files = dict([(x.name, {'id': x.oid, 'hex': x.hex, 'commit': None, 'addition': True}) for x in get_tree(commit.tree, path)])
-        todo = files.keys()
-        commit_ = commit
-
-        for commit in self.walk(commit.hex, pygit2.GIT_SORT_TIME):
-            tree = get_tree(commit.tree, path)
-            if not tree:
-                continue
-            # If we don't have the tree, consider this as possible addition point
-            addition = None
-            for file in todo[:]:
-                if file not in tree:
-                    continue
-                for parent in commit.parents:
-                    ptree = get_tree(parent.tree, path)
-                    if file in ptree and tree[file].oid == ptree[file].oid:
-                        break
-                else:
-                    files[file]['commit'] = commit
-                    todo.remove(file)
-
-        return files
+        """Get a dict of {name: hex} for commits that last changed files in a directory"""
+        data = self.git('blame-tree', '--max-depth=1', commit.hex, '--', os.path.join('.', path)).stdout
+        data = data.decode('utf-8').splitlines()
+        data = [x.split() for x in data]
+        if path:
+            data = [(p[p.rfind('/')+1:], m) for (m,p) in data]
+        else:
+            data = [(p, m) for (m,p) in data]
+        return dict(data)
 
     def blame(self, commit, path):
         if hasattr(commit, 'hex'):
