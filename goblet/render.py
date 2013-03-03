@@ -104,7 +104,7 @@ def code(repo, ref, path, entry, lexer, data=None, blame=False):
                 return Markup('        %s<a href="%s#l-%s">%s</a>' % (match.group(1), link, orig_line, match.group(2)))
             link2 = url_for('commit', repo=repo.name, ref=commit['hex'])
             blame[-1] = commit['hex']
-            return Markup('<a href="%s" title="%s (%s)">%s</a> %s<a href="%s#l-%s">%s</a>' % (link2, commit['summary'], 
+            return Markup('<a href="%s" title="%s (%s)">%s</a> %s<a href="%s#l-%s">%s</a>' % (link2, commit['summary'],
                 time.strftime('%Y-%m-%d', time.gmtime(int(commit['committer-time']))),
                 commit['hex'][:7], match.group(1), link, orig_line, match.group(2)))
         html = re.sub(r'(<a name="l-(\d+)"></a><span class="[^"]+">\s*)(\d+)', replace, html)

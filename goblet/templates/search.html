@@ -1,7 +1,7 @@
 {% extends "repo_base.html" %}
 {% block subtitle %}Search{% endblock %}
 {% block repo_content %}
-<h2>Results {{ start }}..{{ end }} of {{ total }} for {{ request.args['q'] }}</h2> 
+<h2>Results {{ start }}..{{ end }} of {{ total }} for {{ request.args['q'] }}</h2>
 
 {% for file, chunks in results %}
 <div class="blob">

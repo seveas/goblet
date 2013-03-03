@@ -290,7 +290,7 @@
 .chzn-rtl .chzn-search input {
   background: #fff url('chosen/chosen-sprite.png') no-repeat -38px -22px;
   background: url('chosen/chosen-sprite.png') no-repeat -38px -22px, -webkit-gradient(linear, 0 0, 0 100%, color-stop(1%, #eeeeee), color-stop(15%, #ffffff));
-  background: url('chosen/chosen-sprite.png') no-repeat -38px -22px, -webkit-linear-gradient(top, #eeeeee 1%, #ffffff 15%);  
+  background: url('chosen/chosen-sprite.png') no-repeat -38px -22px, -webkit-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
   background: url('chosen/chosen-sprite.png') no-repeat -38px -22px, -moz-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
   background: url('chosen/chosen-sprite.png') no-repeat -38px -22px, -o-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
   background: url('chosen/chosen-sprite.png') no-repeat -38px -22px, linear-gradient(#eeeeee 1%, #ffffff 15%);

@@ -20,7 +20,7 @@ Installing goblet
 -----------------
 Goblet is currently in alpha status, and the only supported install option is
 via git. Clone the repository at git://github.com/seveas/goblet.git to get the
-code. 
+code.
 
   $ pip install http://seveas.net/git-hub
   $ git hub clone seveas/goblet
@@ -74,7 +74,7 @@ Then you can run the uwsgi app as:
   $ uwsgi --plugins python -s /tmp/uwsgi_goblet.sock -w goblet:app
 
 When using virtualenv, you need to tell uwsgi to use your virtualenv:
-  
+
   $ uwsgi --plugins python -s /tmp/uwsgi_goblet.sock -w goblet:app --venv /home/dennis/web/venv/ -C -p 5
 
 Once the wsgi app is running, you need to configure your web server to connect
@@ -86,12 +86,12 @@ to it. I use nginx as frontend and configure it as follows, modify to taste:
       listen 80;
       root /usr/share/nginx/www;
       index index.html index.htm;
-  
+
       location / {
           include uwsgi_params;
           uwsgi_pass unix:/tmp/uwsgi_goblet.sock;
       }
-  
+
       location /static/ {
           alias /home/dennis/goblet/goblet/static/;
       }
