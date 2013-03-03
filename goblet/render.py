@@ -21,7 +21,7 @@ def render(repo, ref, path, entry, no_highlight=False, blame=False):
         if renderer[0] in ('rest', 'markdown'):
             renderer = ('code', pygments.get_lexer_for_filename(path), None, True)
         elif renderer[0] == 'code':
-            renderer = list(renderer) + [None, True]
+            renderer = list(renderer[:2]) + [None, True]
     if renderer[0] == 'code' and no_highlight:
         renderer = ('plain',)
     return renderers[renderer[0]](repo, ref, path, entry, *renderer[1:])
