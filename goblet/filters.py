@@ -72,7 +72,7 @@ def longmsg(message):
 @filter
 def acks(message):
     acks = defaultdict(list)
-    for ack, who in re.findall(r'^([-a-z]+(?:-[a-z]+)*):(.+?)(?:<.*)?\n', message, flags=re.MULTILINE|re.I):
+    for ack, who in re.findall(r'^([-a-z]+(?:-[a-z]+)*):(.+?)(?:<.*)?\n', message.split('\n', 1)[1], flags=re.MULTILINE|re.I):
         ack = ack.lower().replace('-', ' ')
         ack = ack[0].upper() + ack[1:] # Can't use title
         acks[ack].append(who.strip())
