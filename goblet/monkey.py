@@ -82,7 +82,8 @@ class Repository(pygit2.Repository):
     def tags(self):
         return sorted([x[10:] for x in self.listall_references() if x.startswith('refs/tags/')])
 
-    def commit_to_ref_hash(self):
+    @memoize
+    def get_reverse_refs(self):
         ret = defaultdict(list)
         for ref in self.listall_references():
             if ref.startswith('refs/remotes/'):
@@ -96,16 +97,15 @@ class Repository(pygit2.Repository):
             else:
                 ret[self.lookup_reference(ref).hex].append(('head', ref[11:]))
         return ret
+    reverse_refs = property(get_reverse_refs)
 
-    def symref(self, hex):
+    def ref_for_commit(self, hex):
         if hasattr(hex, 'hex'):
             hex = hex.hex
-        for ref in self.listall_references():
-            if not ref.startswith('refs/heads/'):
-                continue
-            if self.lookup_reference(ref).hex == hex:
-                return ref[11:]
-        return hex
+        refs = self.reverse_refs.get(hex, None)
+        if not refs:
+            return hex
+        return refs[-1][1]
 
     @property
     def head(self):

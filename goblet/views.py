@@ -52,11 +52,11 @@ class RepoBaseView(TemplateView):
         if self.template_name:
             data.update(ret)
             if 'ref' in data:
-                data['symref'] = repo.symref(data['ref'])
+                data['ref_for_commit'] = repo.ref_for_commit(data['ref'])
             elif 'commit' in data:
-                data['symref'] = repo.symref(data['commit'])
+                data['ref_for_commit'] = repo.ref_for_commit(data['commit'])
             else:
-                data['symref'] = repo.symref(repo.head)
+                data['ref_for_commit'] = repo.ref_for_commit(repo.head)
             return self.render(data)
         # For rawview
         return ret
@@ -194,7 +194,7 @@ class RepoView(TreeView):
         for file in tree:
             if re.match(r'^readme(?:.(?:txt|rst|md))?$', file.name, flags=re.I):
                 readme = file
-        return {'readme': readme, 'tree': tree, 'ref': repo.symref(repo.head), 'path': '', 'show_clone_urls': True}
+        return {'readme': readme, 'tree': tree, 'ref': repo.ref_for_commit(repo.head), 'path': '', 'show_clone_urls': True}
 
 class BlobView(PathView):
     template_name = 'blob.html'
@@ -260,7 +260,6 @@ class LogView(RefView):
 
     def handle_request(self, repo, ref=None):
         ref = self.lookup_ref(repo, ref)
-        refs = repo.commit_to_ref_hash()
         page = 1
         try:
             page = int(request.args['page'])
@@ -275,7 +274,7 @@ class LogView(RefView):
         if log[-1].parents:
             next_page = page + 1
         shas = [x.hex for x in log]
-        return {'ref': repo.symref(ref), 'log': log, 'shas': shas, 'refs': refs, 'next_page': next_page, 'prev_page': prev_page}
+        return {'ref': repo.ref_for_commit(ref), 'log': log, 'shas': shas, 'refs': repo.reverse_refs, 'next_page': next_page, 'prev_page': prev_page}
 
 snapshot_formats = {
     'zip': ('zip', None,            'zip'    ),
