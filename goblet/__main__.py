@@ -21,6 +21,7 @@ class Defaults:
     ADMINS         = []
     SENDER         = 'webmaster@localhost'
     CLONE_URLS_BASE = {}
+    DEBUG          = os.environ.get('GOBLET_DEBUG', 'False').lower() == 'true'
 
 class Goblet(Flask):
     def __call__(self, environ, start_response):
