@@ -64,7 +64,7 @@ def longmsg(message):
     short, long = message.split('\n', 1)
     if len(short) > 80:
         long = message
-    long = re.sub(r'^[-a-z]+-by:.*\n', '', long, flags=re.MULTILINE|re.I).strip() 
+    long = re.sub(r'^[-a-z]+(-[a-z]+)*:.+\n', '', long, flags=re.MULTILINE|re.I).strip()
     if not long:
         return ""
     return Markup('<pre class="invisible">%s</pre>') % escape(long)
@@ -72,7 +72,7 @@ def longmsg(message):
 @filter
 def acks(message):
     acks = defaultdict(list)
-    for ack, who in re.findall(r'^([-a-z]+)-by:(.*?)(?:<.*)?\n', message, flags=re.MULTILINE|re.I):
+    for ack, who in re.findall(r'^([-a-z]+(?:-[a-z]+)*):(.+?)(?:<.*)?\n', message, flags=re.MULTILINE|re.I):
         ack = ack.lower().replace('-', ' ')
         ack = ack[0].upper() + ack[1:] # Can't use title
         acks[ack].append(who.strip())
