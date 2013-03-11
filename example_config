@@ -1,5 +1,7 @@
 # Goblet config
 REPO_ROOT      = '/path/to/repo_root'
+# Search N levels deep for repos
+MAX_SEARCH_DEPTH = 3
 CACHE_ROOT     = '/tmp/goblet-snapshot'
 CLONE_URLS_BASE = {
     'git': 'git://example.com/',

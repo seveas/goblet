@@ -23,9 +23,23 @@ class TemplateView(View):
 class IndexView(TemplateView):
     template_name = 'repo_index.html'
 
+    def list_repos(self, root, level):
+        for file in os.listdir(root):
+            path = os.path.join(root, file)
+            if not os.path.isdir(path):
+                continue
+            if path.endswith('.git'):
+                yield path
+            elif os.path.exists(os.path.join(path, '.git')):
+                yield os.path.join(path, '.git')
+            elif level > 0:
+                for path in self.list_repos(path, level-1):
+                    yield path
+
     def dispatch_request(self):
         root = current_app.config['REPO_ROOT']
-        repos = glob.glob(os.path.join(root, '*.git')) + glob.glob(os.path.join(root, '*', '.git'))
+        depth = current_app.config['MAX_SEARCH_DEPTH']
+        repos = self.list_repos(root, depth)
         repos = [pygit2.Repository(x) for x in sorted(repos, key=lambda x:x.lower())]
         for keyword in request.args.get('q', '').lower().split():
             keyword = keyword.strip()

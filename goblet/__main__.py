@@ -15,6 +15,7 @@ from goblet.encoding import decode
 
 class Defaults:
     REPO_ROOT      = git_checkout and os.path.dirname(git_checkout) or '/srv/git'
+    MAX_SEARCH_DEPTH = 2
     CACHE_ROOT     = '/tmp/goblet_snapshot'
     USE_X_SENDFILE = False
     USE_X_ACCEL_REDIRECT = False
@@ -55,18 +56,18 @@ def inject_functions():
 
 # URL structure
 app.add_url_rule('/', view_func=v.IndexView.as_view('index'))
-app.add_url_rule('/<repo>/', view_func=v.RepoView.as_view('repo'))
+app.add_url_rule('/<path:repo>/', view_func=v.RepoView.as_view('repo'))
 app.add_url_rule('/<repo>/tree/<path:path>/', view_func=v.TreeView.as_view('tree'))
-app.add_url_rule('/j/<repo>/treechanged/<path:path>/', view_func=j.TreeChangedView.as_view('treechanged'))
-app.add_url_rule('/<repo>/blame/<path:path>', view_func=v.BlobView.as_view('blame'))
-app.add_url_rule('/<repo>/blob/<path:path>', view_func=v.BlobView.as_view('blob'))
-app.add_url_rule('/<repo>/raw/<path:path>', view_func=v.RawView.as_view('raw'))
-app.add_url_rule('/<repo>/patch/<path:ref>/', view_func=v.PatchView.as_view('patch'))
-app.add_url_rule('/<repo>/commit/<path:ref>/', view_func=v.CommitView.as_view('commit'))
-app.add_url_rule('/<repo>/commits/', view_func=v.LogView.as_view('commits'))
-app.add_url_rule('/<repo>/commits/<path:ref>/', view_func=v.LogView.as_view('commits'))
-app.add_url_rule('/<repo>/tags/', view_func=v.TagsView.as_view('tags'))
-app.add_url_rule('/<repo>/snapshot/<path:ref>/<format>/', view_func=v.SnapshotView.as_view('snapshot'))
+app.add_url_rule('/j/<path:repo>/treechanged/<path:path>/', view_func=j.TreeChangedView.as_view('treechanged'))
+app.add_url_rule('/<path:repo>/blame/<path:path>', view_func=v.BlobView.as_view('blame'))
+app.add_url_rule('/<path:repo>/blob/<path:path>', view_func=v.BlobView.as_view('blob'))
+app.add_url_rule('/<path:repo>/raw/<path:path>', view_func=v.RawView.as_view('raw'))
+app.add_url_rule('/<path:repo>/patch/<path:ref>/', view_func=v.PatchView.as_view('patch'))
+app.add_url_rule('/<path:repo>/commit/<path:ref>/', view_func=v.CommitView.as_view('commit'))
+app.add_url_rule('/<path:repo>/commits/', view_func=v.LogView.as_view('commits'))
+app.add_url_rule('/<path:repo>/commits/<path:ref>/', view_func=v.LogView.as_view('commits'))
+app.add_url_rule('/<path:repo>/tags/', view_func=v.TagsView.as_view('tags'))
+app.add_url_rule('/<path:repo>/snapshot/<path:ref>/<format>/', view_func=v.SnapshotView.as_view('snapshot'))
 
 # Logging
 if not app.debug and app.config['ADMINS']:
