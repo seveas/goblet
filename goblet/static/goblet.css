@@ -226,14 +226,14 @@
     padding: 0px 8px;
     line-height: 150%;
 }
+.goblet .blobdiff tr:hover, .goblet .blobdiff tr:hover * {
+    background-color: rgb(255, 255, 204);
+}
 .goblet .deletion .diffcontent {
     background-color: rgb(255, 221, 221);
 }
 .goblet .addition .diffcontent {
     background-color: rgb(221, 255, 221);
-}
-.goblet .blobdiff tr:hover, .blobdiff tr:hover * {
-    background-color: rgb(255, 255, 204);
 }
 .goblet .blobdiff .lineno {
     background-color: rgb(226, 224, 216);
