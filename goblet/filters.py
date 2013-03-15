@@ -71,6 +71,8 @@ def longmsg(message):
 
 @filter
 def acks(message):
+    if '\n' not in message:
+        return []
     acks = defaultdict(list)
     for ack, who in re.findall(r'^([-a-z]+(?:-[a-z]+)*):(.+?)(?:<.*)?\n', message.split('\n', 1)[1], flags=re.MULTILINE|re.I):
         ack = ack.lower().replace('-', ' ')
