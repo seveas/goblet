@@ -258,7 +258,7 @@
 .goblet pre.literal-block {
     padding: 5px;
 }
-.goblet .blob .actions {
+.goblet .blob .actions, .goblet .commitdate .actions {
     display: inline-block;
     float: right;
     font-weight: normal;

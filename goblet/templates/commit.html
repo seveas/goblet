@@ -1,7 +1,12 @@
 {% extends "repo_base.html" %}
 {% block subtitle %}{{ commit.message|shortmsg }} &middot; {{ commit.hex[:7] }}{% endblock %}
 {% block repo_content %}
-<div class="commitdate">{{ commit.commit_time|strftime("%b %d, %Y") }}</div>
+<div class="commitdate">{{ commit.commit_time|strftime("%b %d, %Y") }}
+    <span class="actions">
+    Download as <a rel="nofollow" href="{{ url_for('snapshot', repo=repo.name, ref=commit.hex, format='xz') }}">tar.xz</a> or
+    <a rel="nofollow" href="{{ url_for('snapshot', repo=repo.name, ref=commit.hex, format='zip') }}">zip</a> file.
+    </span>
+</div>
 <div class="commit">
 <div class="commitmsg">
 <img class="gravatar" src="{{ commit.author.email|gravatar(36) }}" />
