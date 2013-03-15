@@ -36,6 +36,19 @@
     ({{ stat[None]['+'] }} addition{% if stat[None]['+'] != 1 %}s{% endif %},
     {{ stat[None]['-'] }} deletion{% if stat[None]['-'] != 1 %}s{% endif %})
 </h2>
+<table class="diffstat">
+{% for file in diff.changes['files'] %}
+<tr>
+  <th>{{ file[1] }}</th>
+  <td>
+    {% if stat[file[1]]['+'] %}+{{ stat[file[1]]['+'] }}{% endif %}{% if stat[file[1]]['-'] %}{% if stat[file[1]]['+'] %}/{% endif %}-{{ stat[file[1]]['-'] }}{% endif %}
+  </td>
+  <td class="statbar" style="width: 100px">
+    <div style="width: {{ stat[file[1]]['%'] }}%">&nbsp;</div>
+  </td>
+</tr>
+{% endfor %}
+</table>
 {% for file in diff.changes['files'] %}
 <div class="blob">
 <h2><img src="{{ file_icon(file[1]) }}" /> <a href="{{ tree_link(repo, commit.hex, path, file[1]) }}">{{ file[1] }}</a>

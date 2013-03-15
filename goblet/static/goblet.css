@@ -121,7 +121,7 @@
 .goblet #filetree {
     width: 100%;
 }
-.goblet #filetree th {
+.goblet #filetree th, .goblet .diffstat th {
     text-align: left;
 }
 .goblet #filetree .name, .goblet #filetree .age {
@@ -229,10 +229,10 @@
 .goblet .blobdiff tr:hover, .goblet .blobdiff tr:hover * {
     background-color: rgb(255, 255, 204);
 }
-.goblet .deletion .diffcontent {
+.goblet .deletion .diffcontent, .goblet .statbar {
     background-color: rgb(255, 221, 221);
 }
-.goblet .addition .diffcontent {
+.goblet .addition .diffcontent, .goblet .statbar div {
     background-color: rgb(221, 255, 221);
 }
 .goblet .blobdiff .lineno {
