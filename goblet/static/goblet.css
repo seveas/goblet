@@ -3,7 +3,7 @@
     color: rgb(78, 68, 60);
     background: url("/static/body.jpg") repeat scroll 0% 0% rgb(240, 239, 231);
     font-family: "Lato","Helvetica Neue",sans-serif;
-    font-size: 15px;
+    font-size: 14px;
     padding: 5px;
     margin: 0px;
 }
@@ -57,17 +57,22 @@
 }
 .goblet h2 {
     font-size: 18px;
-    line-height: 44px;
-    margin-bottom: 0.4em;
+    line-height: 36px;
+    margin-bottom: 0.3em;
     font-weight: bold;
 }
 .goblet h1, .goblet h2, .goblet h3, .goblet h4, .goblet h5, .goblet h6 {
     margin: 0px;
 }
+.goblet .about {
+    float: right;
+    width: 300px;
+}
 .goblet .repo {
     border-top: 1px solid rgb(226, 224, 216);
     padding: 0 1em 1em 1em;
     margin-bottom: 0.2em;
+    width: 600px;
 }
 .goblet .owner {
     color: rgb(154, 153, 148);
@@ -80,7 +85,11 @@
 .goblet .footer {
     color: rgb(154, 153, 148);
     text-align: center;
-    font-size: 70%;
+    font-size: 75%;
+    font-weight: bold;
+}
+.goblet .footer a {
+    color: rgb(154, 153, 148);
 }
 .goblet .tabnav {
     border-bottom: solid 1px rgb(226, 224, 216);
@@ -140,7 +149,8 @@
 }
 .goblet .blob {
     border: solid 1px rgb(226, 224, 216);
-    margin: 1em;
+    border-radius: 5px;
+    margin: 1em 0px;
 }
 
 .goblet .blob-inner {
@@ -148,8 +158,9 @@
 }
 
 .goblet .blob h2 {
-    background-color: rgb(226, 224, 216);
+    background-color: rgb(237, 235, 227);
     padding: 0px 10px;
+    line-height: 30px;
     background-repeat: no-repeat;
 }
 
@@ -186,7 +197,10 @@
     font-weight: bold;
     text-decoration: underline;
 }
-.goblet .commitdata {
+.goblet .commitdata  {
+    padding-top: 1em;
+}
+.goblet .commitdata span {
     color: rgb(154, 153, 148);
     font-size: 90%;
 }
@@ -209,11 +223,12 @@
 
 .goblet .commitdate {
     border: solid 1px rgb(226, 224, 216);
+    border-bottom-width: 0px;
     font-weight: bold;
-    border-radius: 8px 8px 0px 0px;
+    border-radius: 5px 5px 0px 0px;
     padding: 3px 5px;
     font-size: 110%;
-    background-color: rgb(226, 224, 216);
+    background-color: rgb(237, 235, 227);
     margin-top: 10px;
 }
 .blobdiff {
@@ -232,22 +247,26 @@
 .goblet .deletion .diffcontent, .goblet .statbar {
     background-color: rgb(255, 221, 221);
 }
+.goblet .statbar {
+    width: 100px;
+    line-height: 8px;
+}
 .goblet .addition .diffcontent, .goblet .statbar div {
     background-color: rgb(221, 255, 221);
 }
 .goblet .blobdiff .lineno {
-    background-color: rgb(226, 224, 216);
+    background-color: rgb(237, 235, 227);
     width: 3em;
 }
 .goblet .pagelink-prev {
     padding: 8px 10px;
-    background-color: rgb(226,224,216);
+    background-color: rgb(237, 235, 227);
     line-height: 150%;
     border-radius: 5px 0 0 5px;
 }
 .goblet .pagelink-next {
     padding: 8px 10px;
-    background-color: rgb(226,224,216);
+    background-color: rgb(237, 235, 227);
     line-height: 150%;
     border-radius: 0 5px 5px 0;
 }
@@ -262,7 +281,7 @@
     display: inline-block;
     float: right;
     font-weight: normal;
-    font-size: 15px;
+    font-size: 13px;
 }
 .goblet .ref {
     padding: 0px 3px;
@@ -289,7 +308,7 @@
     border-radius: 3px;
     color: rgb(78, 68, 60);
     font-weight: bold;
-    background-color: rgb(226, 224, 216);
+    background-color: rgb(237, 235, 227);
     padding: 0px 5px;
     margin: 2px;
 }
@@ -309,4 +328,17 @@
 .goblet .searchresult {
     font-weight: bold;
     color: rgb(241, 78, 50);
+}
+.goblet .parents {
+    float: right;
+    width: 50%;
+}
+.goblet .parents tr :first-child {
+    width: 7em;
+    vertical-align: top;
+    padding-right: 0.5em;
+}
+.goblet .parents tr {
+    overflow: hidden;
+    height: 1em;
 }

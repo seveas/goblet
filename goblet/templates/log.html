@@ -14,24 +14,24 @@
     <a href="{{ url_for('commit', repo=repo.name, ref=commit.hex) }}">{{ commit.message|shortmsg }}</a> {% if commit.message|longmsg %}<span class="show_long">more&hellip;</span>{% endif %}
     {% for reftype, refid in refs[commit.hex] %}<span class="ref ref_{{ reftype }}">{{ refid }}</span>{% endfor %}
     {{ commit.message|longmsg }}
-    <div class="commitdata">
-    <span class="author">{{ commit.author.name }} authored {{ commit.author.time|humantime }}</span>
-    {% if commit.committer.email != commit.author.email %}
-    <br /><span class="committer">{{ commit.committer.name }} committed {{ commit.committer.time|humantime }}</span>
-    {% for ack, who in commit.message|acks %}<br /><span class="committer">{{ ack }}: {{ who|join(", ") }}</span>{% endfor %}
-    {% endif %}
-    {% if commit.parents %}
-    <br /><span class="parents">Parent commit{% if commit.parents|length != 1 %}s{% endif %}:
-    {% for parent in commit.parents %}
-    {% if parent.hex in shas %}
-    <a href="#{{ parent.hex }}">{{ parent.hex[:7] }}</a>
-    {% else %}
-    <a href="{{ url_for('commits', repo=repo.name, ref=parent.hex) }}">{{ parent.hex[:7] }}</a>
-    {% endif %}
-    {% endfor %}
-    </span>
-    {% endif %}
-    </div>
+<div class="commitdata">
+{% if commit.parents %}
+<table class="parents">
+<tr>
+<td>Parent&nbsp;commit{% if commit.parents|length > 1%}s{% endif %}</td>
+<td>
+{% for parent in commit.parents %}
+<a href="{{ url_for('commit', repo=repo.name, ref=parent.hex) }}">{{ parent.hex[:7] }}</a> {{ parent.message|shortmsg }}<br />
+{% endfor %}
+</td>
+</tr></table>
+{% endif %}
+<span class="author">Created by {{ commit.author.name }}, {{ commit.author.time|humantime }}</span>
+{% if commit.committer.email != commit.author.email %}
+<br /><span class="committer">Committed by {{ commit.committer.name }}, {{ commit.committer.time|humantime }}</span>
+{% for ack, who in commit.message|acks %}<br /><span class="committer">{{ ack }}: {{ who|join(", ") }}</span>{% endfor %}
+{% endif %}
+</div>
     </div>
   </div>
   {% endfor %}

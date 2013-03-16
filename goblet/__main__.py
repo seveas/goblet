@@ -23,6 +23,16 @@ class Defaults:
     SENDER         = 'webmaster@localhost'
     CLONE_URLS_BASE = {}
     DEBUG          = os.environ.get('GOBLET_DEBUG', 'False').lower() == 'true'
+    ABOUT = """<h2>About git &amp; goblet</h2>
+<p>
+<a href="http://git-scm.com">Git</a> is a free and open source distributed
+version control system designed to handle everything from small to very large
+projects with speed and efficiency. 
+</p>
+<p>
+Goblet is a fast web-based git repository browser using libgit2.
+</p>
+"""
 
 class Goblet(Flask):
     def __call__(self, environ, start_response):

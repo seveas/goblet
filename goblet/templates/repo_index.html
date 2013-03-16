@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 {% block title %}Git repositories on {{ request.host }}{% endblock %}
 {% block content %}
+{% if config['ABOUT'] %}
+<div class="about">
+{{ config['ABOUT']|safe }}
+</div>
+{% endif %}
 <h1>Git repositories on {{ request.host }}</h1>
 
 {% for repo in repos %}

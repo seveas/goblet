@@ -10,6 +10,18 @@ CLONE_URLS_BASE = {
 #    'ssh': 'example.com:/srv/gitroot',
 }
 
+ABOUT = """<h2>About git &amp; goblet</h2>
+<p>
+<a href="http://git-scm.com">Git</a> is a free and open source distributed
+version control system designed to handle everything from small to very large
+projects with speed and efficiency. 
+</p>
+<p>
+Goblet is a fast web-based git repository browser using libgit2.
+</p>
+</div>"""
+
+
 # Logger settings
 ADMINS         = ['your_mailaddress@example.com']
 SENDER         = 'webmaster@localhost'
