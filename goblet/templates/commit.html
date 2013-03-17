@@ -57,7 +57,9 @@
 <h2><img src="{{ file_icon(file[1]) }}" /> <a href="{{ tree_link(repo, commit.hex, path, file[1]) }}">{{ file[1] }}</a>
 <span class="actions">
 {% set file_link = tree_link(repo, commit.hex, path, file[1]) %}
+{% if commit.parents %}
 {% set old_file_link = tree_link(repo, commit.parents[0].hex, path, file[1]) %}
+{% endif %}
 <a href="{{ file_link }}">view</a> |
 <a href="{{ raw_link(repo, commit.hex, path, file[1]) }}">raw</a> | <a href="{{ blame_link(repo, commit.hex, path, file[1]) }}">blame</a> | history
 </span>
