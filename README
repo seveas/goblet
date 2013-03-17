@@ -1,139 +1,19 @@
-Goblet - git web viewer
-=======================
+Goblet - git repository viewer
+==============================
+Goblet is a fast, easy to customize web frontend for git repositories. It was
+created because existing alternatives are either not very easy to customize
+(gitweb), require C programming to do so (cgit), or are tied into other
+products, such as bugtrackers (redmin, github).
 
-In my search for git web interfaces, most ones I found were ugly (gitweb),
-unmaintained (Gitalist), closed source (Github) or tied into other products,
-such as issue trackers or complete project management tools (redmine).
+Goblet is currently in alpha status, so not all goals have been met yet.
+Contributions are welcome, the most useful contribution is using it and
+reporting all issues you have.
 
-I wanted a git web interface that looked better and was easier to customize
-than gitweb, but still remained just a web interface. And thus Goblet was born.
-It's open source, built on libgit2 and flask and should be easy to customize.
+If you want to see goblet in action, you can find a running instance on
+git.kaarsemaker.net. If you like what you see, proceed to read docs/install.rst
+and enjoy!
 
-Design-wise, it borrows quite a bit from github. Given that I'm a lousy
-designer, this is probably a good idea.
-
-Example
--------
-If you want to see Goblet in action, go to http://git.kaarsemaker.net
-
-Installing goblet
------------------
-Goblet is currently in alpha status, and the only supported install option is
-via git. Clone the repository at git://github.com/seveas/goblet.git to get the
-code.
-
-  $ pip install http://seveas.net/git-hub
-  $ git hub clone seveas/goblet
-  $ cd goblet
-  $ git submodule init
-  $ git submodule update
-
-Most dependencies for goblet are easy to install
-
-  pip install flask jinja2 pygments markdown chardet docutils whelk
-
-But libgit2 and pygit2 need to be compiled from source. On an Ubuntu system,
-the following should suffice to download them from github, compile them and
-install them into /usr/local.
-
-  $ sudo apt-get install cmake xz python-all-devel
-
-  $ git hub clone libgit2/libgit2
-  $ pushd libgit2
-  $ mkdir build && cd build
-  $ cmake --build ..
-  $ sudo cmake --build . --target install
-  $ popd
-
-  $ git hub clone libgit2/pygit2
-  $ pushd pygit2
-  $ python setup.py build
-  $ sudo python setup.py install
-  $ popd
-
-  $ sudo ldconfig
-
-Running goblet
---------------
-Inside your goblet checkout, run this command to see if all is working:
-
-  $ python -mgoblet
-
-This should start a development server that listens on http://localhost:5000.
-You should see the goblet repository listed. If the directory containing the
-goblet repository contains other repositories, these will show up as well.
-
-This dev server should not be used to open up access from the outside world,
-instead it's better to run goblet under wsgi. You need to install uwsgi and the
-python plugin. Under Ubuntu:
-
-  $ sudo apt-get install uwsgi-core uwsgi-plugin-python
-
-Then you can run the uwsgi app as:
-
-  $ uwsgi --plugins python -s /tmp/uwsgi_goblet.sock -w goblet:app
-
-When using virtualenv, you need to tell uwsgi to use your virtualenv:
-
-  $ uwsgi --plugins python -s /tmp/uwsgi_goblet.sock -w goblet:app --venv /home/dennis/web/venv/ -C -p 5
-
-Once the wsgi app is running, you need to configure your web server to connect
-to it. I use nginx as frontend and configure it as follows, modify to taste:
-
-  server {
-      server_name git.kaarsemaker.net;
-
-      listen 80;
-      root /usr/share/nginx/www;
-      index index.html index.htm;
-
-      location / {
-          include uwsgi_params;
-          uwsgi_pass unix:/tmp/uwsgi_goblet.sock;
-      }
-
-      location /static/ {
-          alias /home/dennis/goblet/goblet/static/;
-      }
-
-      location /snapshots/ {
-          internal;
-          alias /tmp/goblet;
-      }
-  }
-
-Configuring goblet
-------------------
-Goblet can be configured like any flask app can: define your settings in a
-configuration file and pass the name of that file to the app as an environment
-variable. The variable name is GOBLET_SETTINGS, and besides flask's builting
-configuration variables listed at http://flask.pocoo.org/docs/config/, there
-are only two settings that are needed:
-
-  REPO_ROOT: the path to a directory containing all your repositories
-  CACHE_ROOT: where goblet should store snapshots of cache repositories
-  CLONE_URLS_BASE: the root urls where people can clone your repositories
-
-An example configuration is shipped in the example_config file. One particular
-setting to note is USE_X_ACCEL_REDIRECT. Under nginx, X-Sendfile (as used for
-the snapshots) does not work, so you need to set both USE_X_SENDFILE and
-USE_X_ACCEL_REDIRECT. The CACHE_ROOT path should also match the root in your
-/snapshots/ location.
-
-Configuring repositories
-------------------------
-
-No per-repository configuration is required, but some data from .git
-directories and the .git config is used if it is available.
-
-  description
-     A description for a git repository is read from .git/description
-
-  owner
-     The owner of a repository is read from the goblet.owner configuration
-     variable or the file's owner on the filesystem
-
-  clone urls
-     The clone urls will be generated from the CLONE_URLS_BASE setting and the
-     repository name. If you want to override the clone url, you can set the
-     goblet.clone_url_$protocol variables.
+Should you hit a problem installing or using github, please report it on
+github. Reports about uncaught python exceptions should include full
+backtraces. If the repository triggering the bug/issue is public, please
+include a link to the repository and the link to the bug so I can reproduce it.

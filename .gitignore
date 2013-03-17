@@ -5,3 +5,4 @@ __pycache__
 *.pid
 *.sock
 *.log
+docs/_build

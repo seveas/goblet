@@ -14,7 +14,7 @@ import goblet.render
 from goblet.encoding import decode
 
 class Defaults:
-    REPO_ROOT      = git_checkout and os.path.dirname(git_checkout) or '/srv/git'
+    REPO_ROOT      = git_checkout and os.path.dirname(git_checkout) or os.getcwd()
     MAX_SEARCH_DEPTH = 2
     CACHE_ROOT     = '/tmp/goblet-snapshots'
     USE_X_SENDFILE = False
