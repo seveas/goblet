@@ -3,9 +3,21 @@
 from distutils.core import setup
 
 setup(name = "goblet",
-      version = "0.1",
+      version = "0.2",
       author = "Dennis Kaarsemaker",
       author_email = "dennis@kaarsemaker.net",
-      url = "http://github.com/seveas/goblet",
+      url = "http://seveas.github.com/goblet",
       description = "Git web interface using libgit2 and flask",
+      packages = ["goblet"],
+      package_data = {'goblet': ['static/*.*', 'static/chosen/*', 'templates/*']},
+      classifiers = [
+          'Development Status :: 3 - Alpha',
+          'Environment :: Web Environment',
+          'Intended Audience :: Developers',
+          'Intended Audience :: System Administrators',
+          'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
+          'Topic :: Internet :: WWW/HTTP :: WSGI :: Application',
+          'Topic :: Software Development',
+          'Topic :: Software Development :: Version Control',
+      ]
 )

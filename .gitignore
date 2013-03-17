@@ -1,8 +1,15 @@
-build
+# Python & vim byproducts
 *.py?
 __pycache__
 .*.sw?
+
+# uwsgi byproducts
 *.pid
 *.sock
 *.log
+
+# Build byproducts
+build
 docs/_build
+dist
+MANIFEST
