@@ -46,6 +46,7 @@ class Repository(pygit2.Repository):
     @memoize
     def get_clone_urls(self):
         clone_base = current_app.config.get('CLONE_URLS_BASE', {})
+        repo_root = current_app.config['REPO_ROOT']
         ret = {}
         for proto in ('git', 'ssh', 'http'):
             try:
@@ -56,9 +57,9 @@ class Repository(pygit2.Repository):
             if proto not in clone_base:
                 continue
             if self.config['core.bare']:
-                ret[proto] = clone_base[proto] + os.path.basename(self.path)
+                ret[proto] = clone_base[proto] + self.path.replace(repo_root, '')
             else:
-                ret[proto] = clone_base[proto] + os.path.basename(os.path.dirname(os.path.dirname(self.path)))
+                ret[proto] = clone_base[proto] + os.path.dirname(os.path.dirname(self.path)).replace(repo_root, '')
         return ret
     clone_urls = property(get_clone_urls)
 

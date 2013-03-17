@@ -16,7 +16,7 @@ from goblet.encoding import decode
 class Defaults:
     REPO_ROOT      = git_checkout and os.path.dirname(git_checkout) or '/srv/git'
     MAX_SEARCH_DEPTH = 2
-    CACHE_ROOT     = '/tmp/goblet_snapshot'
+    CACHE_ROOT     = '/tmp/goblet-snapshots'
     USE_X_SENDFILE = False
     USE_X_ACCEL_REDIRECT = False
     ADMINS         = []
@@ -40,7 +40,9 @@ class Goblet(Flask):
             if self.config['USE_X_ACCEL_REDIRECT']:
                 for num, (header, value) in enumerate(headers):
                     if header == 'X-Sendfile':
-                        headers[num] = ('X-Accel-Redirect', '/snapshots/' + value[value.rfind('/')+1:])
+                        fn = value[value.rfind('/')+1:]
+                        if os.path.exists(os.path.join(self.config['CACHE_ROOT'], fn)):
+                            headers[num] = ('X-Accel-Redirect', '/snapshots/' + fn)
                         break
             return start_response(status, headers, exc_info)
         return super(Goblet, self).__call__(environ, x_accel_start_response)

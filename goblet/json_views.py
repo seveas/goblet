@@ -2,7 +2,7 @@ from goblet.views import PathView
 from goblet.filters import humantime, shortmsg
 from jinja2 import escape
 import json
-from flask import send_file
+from flask import send_file, request, redirect, config, current_app
 import os
 
 class TreeChangedView(PathView):
@@ -26,4 +26,8 @@ class TreeChangedView(PathView):
             ret = {'files': lastchanged, 'commits': commits}
             with open(cfile, 'w') as fd:
                 json.dump(ret, fd)
-        return send_file(cfile)
+        if 'wsgi.version' in request.environ:
+            # Redirect to the file, let the webserver deal with it
+            return redirect(cfile.replace(current_app.config['REPO_ROOT'], ''))
+        else:
+            return send_file(cfile)

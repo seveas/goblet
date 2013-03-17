@@ -2,3 +2,6 @@ build
 *.py?
 __pycache__
 .*.sw?
+*.pid
+*.sock
+*.log
