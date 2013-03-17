@@ -1,0 +1,180 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Configuring goblet &mdash; Goblet 0.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="_static/cloud.js"></script>
+    <link rel="top" title="Goblet 0.2 documentation" href="index.html" />
+    <link rel="prev" title="Installing goblet" href="install.html" /> 
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="install.html" title="Installing goblet"
+             accesskey="P">previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">Goblet 0.2 documentation</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="configuring-goblet">
+<h1>Configuring goblet<a class="headerlink" href="#configuring-goblet" title="Permalink to this headline">¶</a></h1>
+<p>Goblet can be run without any configuration for a quick test, using the
+built-in webserver. This is not suitable for any production environment, but is
+very helpful to see if all parts work. Change directory to a directory that
+contains one or more git repositories and start goblet:</p>
+<div class="highlight-python"><pre>cd /home/dennis/code
+GOBLET_DEBUG=1 python -mgoblet</pre>
+</div>
+<p>This places werkzeug (the underlying wsgi library) in debug mode. Never do this
+in production, as it allows people to execute arbitrary code on your server.</p>
+<div class="section" id="goblet-configuration">
+<h2>Goblet configuration<a class="headerlink" href="#goblet-configuration" title="Permalink to this headline">¶</a></h2>
+<p>Goblet itself takes only a few configuration variables to alter its behaviour.
+Most important are the root directory for all repositories and the logging
+settings. The configuration is actually python code, so you can do interesting
+tricks with it. The goblet tarball ships an example configuration with all
+parameters and documentation for all of them, please refer to it when creating
+your own configuration.</p>
+</div>
+<div class="section" id="uwsgi-configuration">
+<h2>uwsgi configuration<a class="headerlink" href="#uwsgi-configuration" title="Permalink to this headline">¶</a></h2>
+<p>The prefered way to serve flask applications like goblet, is to use uwsgi and a
+webserver that speaks the wsgi protocol. A document example config is shipped
+with goblet. You will need to modify it to your reality (filesystem paths) and
+then you can run it. Do <em>not</em> run uwsgi as root, but create a special user
+account to run uwsgi.</p>
+<p>Once configured, it can be started with:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">uwsgi</span> <span class="o">--</span><span class="n">ini</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">uwsgi</span><span class="o">.</span><span class="n">ini</span>
+</pre></div>
+</div>
+<p>And killed again with:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">uwsgi</span> <span class="o">--</span><span class="n">stop</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">uwsgi</span><span class="o">.</span><span class="n">pid</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="webserver-configuration">
+<h2>Webserver configuration<a class="headerlink" href="#webserver-configuration" title="Permalink to this headline">¶</a></h2>
+<p>I use nginx to serve goblet, and the example config shipped with goblet is the
+same as the one I use, except for some filesystem paths and the hostname. The
+configuration integrates goblet, git&#8217;s http-backend for serving the actual
+repositories, and lets you serve files in your repository root as well. If you
+make goblet work using another httpd, please share your configuration.</p>
+</div>
+<div class="section" id="repository-configuration">
+<h2>Repository configuration<a class="headerlink" href="#repository-configuration" title="Permalink to this headline">¶</a></h2>
+<p>Per-repository configuration is not needed either, but like gitweb, goblet can
+read some information from the git configuration.</p>
+<ul class="simple">
+<li>A description for the repository is read from the <tt class="file docutils literal"><span class="pre">.git/description</span></tt>
+file.</li>
+<li>The owner of the repository is determined from filesystem permissions, but
+can be overridden by setting the goblet.owner variable in a repository.</li>
+<li>You can tell your visitors where to clone your repositories from. The default
+is to determine it from the <tt class="xref py py-data docutils literal"><span class="pre">CLONE_URLS_BASE</span></tt> variable in goblet.conf,
+but can be overridden per repository by setting goblet.clone_url_ssh (and
+_git, and _http)</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Configuring goblet</a><ul>
+<li><a class="reference internal" href="#goblet-configuration">Goblet configuration</a></li>
+<li><a class="reference internal" href="#uwsgi-configuration">uwsgi configuration</a></li>
+<li><a class="reference internal" href="#webserver-configuration">Webserver configuration</a></li>
+<li><a class="reference internal" href="#repository-configuration">Repository configuration</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="install.html"
+                        title="previous chapter">Installing goblet</a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="install.html" title="Installing goblet"
+             >previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">Goblet 0.2 documentation</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2013, Dennis Kaarsemaker.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>
