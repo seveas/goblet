@@ -3,7 +3,7 @@
 {% block repo_content %}
 <div class="commitdate">{{ commit.commit_time|strftime("%b %d, %Y") }}
     <span class="actions">
-    Download as <a href="{{ url_for('patch', repo=repo.name, ref=commit.hex) }}">patch</a>,
+    Download as <a rel="nofollow" href="{{ url_for('patch', repo=repo.name, ref=commit.hex) }}">patch</a>,
     <a rel="nofollow" href="{{ url_for('snapshot', repo=repo.name, ref=commit.hex, format='xz') }}">tar.xz</a> or
     <a rel="nofollow" href="{{ url_for('snapshot', repo=repo.name, ref=commit.hex, format='zip') }}">zip</a> file.
     </span>
@@ -61,7 +61,7 @@
 {% set old_file_link = tree_link(repo, commit.parents[0].hex, path, file[1]) %}
 {% endif %}
 <a href="{{ file_link }}">view</a> |
-<a href="{{ raw_link(repo, commit.hex, path, file[1]) }}">raw</a> | <a href="{{ blame_link(repo, commit.hex, path, file[1]) }}">blame</a> | history
+<a rel="nofollow" href="{{ raw_link(repo, commit.hex, path, file[1]) }}">raw</a> | <a rel="nofollow" href="{{ blame_link(repo, commit.hex, path, file[1]) }}">blame</a> | history
 </span>
 </h2>
 <table class="blobdiff">

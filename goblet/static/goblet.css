@@ -321,7 +321,7 @@
 .goblet .clonelinks input {
     border-color: rgb(226, 224, 216);
     border-width: 1px;
-    border-radius: 50px;
+    border-radius: 3px;
     padding: 0px 10px;
     width: 400px;
 }
