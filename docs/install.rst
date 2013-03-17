@@ -26,11 +26,11 @@ against the latest git version, as the last four patches on `my git clone`_
 
 Python dependencies
 -------------------
-Goblet requires Python 2.6 or newer, python 3 is not yet supported. It has only
-a few python dependencies: the flask/werkzeug/jinja2/pygments combination as
-web framework, markdown for rendering markdown and whelk for executing git
-commands. These can all be installed with pip, or from my repositories or the
-Ubuntu repositories.
+Goblet requires Python 2.6 or newer, python 3 is not yet supported. It has
+only a few python dependencies: the flask/werkzeug/jinja2/pygments
+combination as web framework, markdown and docutils for rendering markdown and
+rst, and whelk for executing git commands. These can all be installed with
+pip, or from my repositories or the Ubuntu repositories.
 
 pygit2
 ------
