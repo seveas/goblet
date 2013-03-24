@@ -26,7 +26,7 @@ class TreeChangedView(PathView):
             ret = {'files': lastchanged, 'commits': commits}
             with open(cfile, 'w') as fd:
                 json.dump(ret, fd)
-        if 'wsgi.version' in request.environ:
+        if 'wsgi.version' in request.environ and request.environ['SERVER_PORT'] != '5000':
             # Redirect to the file, let the webserver deal with it
             return redirect(cfile.replace(current_app.config['REPO_ROOT'], ''))
         else:
