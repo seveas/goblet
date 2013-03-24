@@ -13,7 +13,7 @@ history
 </span>
 </h2>
 <div class="blob-inner">
-{{ render(repo, ref, path, file, blame=request.endpoint == 'blame') }}
+{{ render(repo, ref, path, file, blame=request.endpoint == 'blame', plain=request.args.get('plain') == '1') }}
 </div>
 </div>
 {% endblock %}

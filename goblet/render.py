@@ -15,15 +15,15 @@ renderers = {}
 image_exts = ('.gif', '.png', '.bmp', '.tif', '.tiff', '.jpg', '.jpeg', 'ppm',
     'pnm', 'pbm', 'pgm', 'webp')
 
-def render(repo, ref, path, entry, no_highlight=False, blame=False):
+def render(repo, ref, path, entry, plain=False, blame=False):
     renderer = detect_renderer(entry)
+    if plain and renderer[0] in ('rest', 'markdown'):
+        renderer = ('code', pygments.lexers.get_lexer_for_filename(path))
     if blame:
         if renderer[0] in ('rest', 'markdown'):
             renderer = ('code', pygments.lexers.get_lexer_for_filename(path), None, True)
         elif renderer[0] == 'code':
             renderer = list(renderer[:2]) + [None, True]
-    if renderer[0] == 'code' and no_highlight:
-        renderer = ('plain',)
     return renderers[renderer[0]](repo, ref, path, entry, *renderer[1:])
 
 def detect_renderer(entry):
@@ -110,10 +110,11 @@ def code(repo, ref, path, entry, lexer, data=None, blame=False):
         html = re.sub(r'(<a name="l-(\d+)"></a><span class="[^"]+">\s*)(\d+)', replace, html)
     return html
 
+add_plain_link = Markup('''<script type="text/javascript">$('.actions').prepend('<a href="' + window.location + '?plain=1">plain</a> | ')</script>''')
 @renderer
 def markdown(repo, ref, path, entry):
     data = decode(entry.to_object().data)
-    return Markup(markdown_.Markdown(safe_mode="escape").convert(data))
+    return Markup(markdown_.Markdown(safe_mode="escape").convert(data)) + add_plain_link
 
 @renderer
 def rest(repo, ref, path, entry):
@@ -125,7 +126,7 @@ def rest(repo, ref, path, entry):
         'report_level': 5,
     }
     data = docutils.core.publish_parts(data,settings_overrides=settings,writer_name='html')
-    return Markup(data['body'])
+    return Markup(data['body']) + add_plain_link
 
 @renderer
 def binary(repo, ref, path, entry):
