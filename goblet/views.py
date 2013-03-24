@@ -290,6 +290,30 @@ class LogView(RefView):
         shas = [x.hex for x in log]
         return {'ref': repo.ref_for_commit(ref), 'log': log, 'shas': shas, 'refs': repo.reverse_refs, 'next_page': next_page, 'prev_page': prev_page}
 
+class HistoryView(PathView,RefView):
+    template_name = 'log.html'
+    commits_per_page = 50
+
+    def handle_request(self, repo, path):
+        ref, path, tree, file = self.split_ref(repo, path, expects_file=True)
+        ref = self.lookup_ref(repo, ref)
+        page = 1
+        try:
+            page = int(request.args['page'])
+        except (KeyError, ValueError):
+            pass
+        page = max(1,page)
+        next_page = prev_page = None
+        if page > 1:
+            prev_page = page - 1
+
+        log = list(repo.get_commits(ref, skip=self.commits_per_page * (page-1), count=self.commits_per_page, file=path))
+        if log and log[-1].parents:
+            next_page = page + 1
+        shas = [x.hex for x in log]
+        return {'ref': repo.ref_for_commit(ref), 'log': log, 'shas': shas, 'refs': repo.reverse_refs, 'next_page': next_page, 'prev_page': prev_page}
+
+
 snapshot_formats = {
     'zip': ('zip', None,            'zip'    ),
     'xz':  ('tar', ['xz'],          'tar.xz' ),
@@ -426,6 +450,10 @@ def raw_link(repo, ref, path, file=None):
 def blame_link(repo, ref, path, file=None):
     parts = [x for x in (ref, path, file) if x]
     return url_for('blame', repo=repo.name, path='/'.join(parts))
+
+def history_link(repo, ref, path, file=None):
+    parts = [x for x in (ref, path, file) if x]
+    return url_for('history', repo=repo.name, path='/'.join(parts))
 
 def file_icon(file):
     mode = getattr(file, 'filemode', stat.S_IFREG)

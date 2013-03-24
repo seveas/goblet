@@ -12,7 +12,8 @@
 {% set file_link = tree_link(repo, ref, path, file[1]) %}
 <a href="{{ file_link }}">view</a> |
 <a rel="nofollow" href="{{ raw_link(repo, ref, path, file[1]) }}">raw</a> |
-<a rel="nofollow" href="{{ blame_link(repo, ref, path) }}">blame</a> | history
+<a rel="nofollow" href="{{ blame_link(repo, ref, path) }}">blame</a> |
+<a rel="nofollow" href="{{ history_link(repo, ref, path) }}">history</a>
 </span>
 </h2>
 <table class="blobdiff">

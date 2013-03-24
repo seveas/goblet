@@ -115,11 +115,34 @@ class Repository(pygit2.Repository):
         except pygit2.GitError:
             return None
 
-    def get_commits(self, ref, skip, count, search=None):
+    def get_commits(self, ref, skip, count, search=None, file=None):
         num = 0
+        path = []
+        if file:
+            path = file.split('/')
         for commit in self.walk(ref.hex, pygit2.GIT_SORT_TIME):
             if search and search not in commit.message:
                 continue
+            if path:
+                try:
+                    tree = commit.tree
+                    for file in path[:-1]:
+                        tree = tree[path].to_object()
+                    oid = tree[path[-1]].oid
+                except KeyError:
+                    break
+                try:
+                    for parent in commit.parents:
+                        tree = parent.tree
+                        for file in path[:-1]:
+                            tree = tree[path].to_object()
+                        if tree[path[-1]].oid != oid:
+                            break
+                    else:
+                        continue
+                except KeyError:
+                    pass
+
             num += 1
             if num < skip:
                 continue
