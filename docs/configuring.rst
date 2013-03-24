@@ -26,15 +26,16 @@ The prefered way to serve flask applications like goblet, is to use uwsgi and a
 webserver that speaks the wsgi protocol. A document example config is shipped
 with goblet. You will need to modify it to your reality (filesystem paths) and
 then you can run it. Do *not* run uwsgi as root, but create a special user
-account to run uwsgi.
+account to run uwsgi or use the same user as for your webserer (www-data on
+Debian/Ubuntu) and configure uwsgi to switch to that user.
 
 Once configured, it can be started with::
 
-  uwsgi --ini /path/to/uwsgi.ini
+  sudo uwsgi --ini /path/to/uwsgi.ini
 
 And killed again with::
 
-  uwsgi --stop /path/to/uwsgi.pid
+  sudo uwsgi --stop /run/uwsgi.pid
 
 Webserver configuration
 -----------------------
@@ -43,6 +44,16 @@ same as the one I use, except for some filesystem paths and the hostname. The
 configuration integrates goblet, git's http-backend for serving the actual
 repositories, and lets you serve files in your repository root as well. If you
 make goblet work using another httpd, please share your configuration.
+
+fcgiwrap
+--------
+To make nginx execute the git smart http backend, you will also need to install
+and run fcgiwrap. Make sure you edit its initscript and add a line that says::
+
+    export HOME=/nonexistent
+
+If you do not do this, git will try to read :file:`/root/.gitconfig`, which it
+cannot do.
 
 Repository configuration
 ------------------------
