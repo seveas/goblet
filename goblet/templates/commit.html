@@ -43,12 +43,16 @@
 {% for file in diff.changes['files'] %}
 <tr>
   <th>{{ file[1] }}</th>
+  {% if file[1] in stat %}
   <td>
     {% if stat[file[1]]['+'] %}+{{ stat[file[1]]['+'] }}{% endif %}{% if stat[file[1]]['-'] %}{% if stat[file[1]]['+'] %}/{% endif %}-{{ stat[file[1]]['-'] }}{% endif %}
   </td>
   <td>
     <div class="statbar"><div style="width: {{ stat[file[1]]['%'] }}%">&nbsp;</div></div>
   </td>
+  {% else %}
+    <td colspan="2">(Binary file)</td>
+  {% endif %}
 </tr>
 {% endfor %}
 </table>

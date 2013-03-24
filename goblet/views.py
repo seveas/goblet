@@ -331,7 +331,19 @@ class CommitView(RefView):
             diff_, stat = fakediff(ref.tree)
         else:
             diff = ref.parents[0].tree.diff(ref.tree)
-            diff_, stat = realdiff(diff)
+            ignore = []
+            for id, dfile in enumerate(diff.changes['files'][:]):
+                for tree in (ref.tree, ref.parents[0].tree):
+                    try:
+                        path = dfile[1].split('/')
+                        for name in path:
+                            tree = tree[name].to_object()
+                        if '\0' in tree.data:
+                            ignore.append(id)
+                            break
+                    except KeyError:
+                        pass
+            diff_, stat = realdiff(diff,ignore)
         return {'commit': ref, 'diff': diff, 'formatdiff': diff_, 'stat': stat}
 
 class PatchView(RefView):
@@ -368,16 +380,20 @@ def fakediff(tree):
     fstat[None] = {'-': sum([x['-'] for x in fstat.values()]), '+': sum([x['+'] for x in fstat.values()])}
     return files, fstat
 
-def realdiff(diff):
+def realdiff(diff, ignore):
     files = {}
     stat = {}
     # Can happen with subproject-only commits
     if not diff.changes:
         return {}, {None: {'+': 0, '-': 0}}
-    for file in diff.changes['files']:
+    for id, file in enumerate(diff.changes['files']):
+        if id in ignore:
+            continue
         files[file[1]] = []
         stat[file[1]] = {'-': 0, '+': 0}
     for hunk in diff.changes.get('hunks', []):
+        if hunk.new_file not in files:
+            continue
         files[hunk.new_file].append(hunk)
         s = stat[hunk.new_file]
         s['-'] += len([x for x in hunk.data if x[1] == pygit2.GIT_DIFF_LINE_DELETION])
