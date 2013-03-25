@@ -1,5 +1,5 @@
 from goblet.views import PathView
-from goblet.filters import humantime, shortmsg
+from goblet.filters import shortmsg
 from jinja2 import escape
 import json
 from flask import send_file, request, redirect, config, current_app
@@ -22,7 +22,7 @@ class TreeChangedView(PathView):
             commits = {}
             for commit in set(lastchanged.values()):
                 commit = repo[commit]
-                commits[commit.hex] = [humantime(commit.commit_time), escape(shortmsg(commit.message))]
+                commits[commit.hex] = [commit.commit_time, escape(shortmsg(commit.message))]
             for file in lastchanged:
                 lastchanged[file] = (lastchanged[file], tree[file].hex[:7])
             ret = {'files': lastchanged, 'commits': commits}
