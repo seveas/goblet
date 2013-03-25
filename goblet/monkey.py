@@ -226,7 +226,7 @@ class Repository(pygit2.Repository):
             yield filename, chunks
 
     def git(self, *args):
-        return shell.git('--git-dir', self.path, *args)
+        return shell.git('--git-dir', self.path, '--work-tree', self.workdir or '/nonexistent', *args)
 
 def get_tree(tree, path):
     for dir in path:
