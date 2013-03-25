@@ -9,7 +9,7 @@ setup(name = "goblet",
       url = "http://seveas.github.com/goblet",
       description = "Git web interface using libgit2 and flask",
       packages = ["goblet"],
-      package_data = {'goblet': ['static/*.*', 'static/chosen/*', 'templates/*']},
+      package_data = {'goblet': ['themes/*/*/*.*', 'themes/*/*/*/*']},
       classifiers = [
           'Development Status :: 3 - Alpha',
           'Environment :: Web Environment',
