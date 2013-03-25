@@ -207,7 +207,7 @@
 .goblet .commitmsg .committer {
     margin-left: 2em;
 }
-.goblet pre {
+.goblet pre, .goblet code {
     font-family: 'Source Code Pro', monospace;
     font-size: 12px;
     color: rgb(51, 51, 51);
@@ -341,4 +341,60 @@
 .goblet .parents tr {
     overflow: hidden;
     height: 1em;
+}
+
+.goblet .render-markdown ul, .render-markdown ol, .render-markdown pre {
+    margin-left: 2em;
+    margin-top: 0.5em;
+}
+.goblet .render-markdown p {
+    padding-top: 0.5em;
+}
+.goblet .render-markdown h1,
+.goblet .render-markdown h2,
+.goblet .render-markdown h3,
+.goblet .render-markdown h4,
+.goblet .render-markdown h5,
+.goblet .render-markdown h6 {
+    background-color: #fff;
+    padding: 0.5em 0px 0px 0px;
+
+}
+
+.goblet .render-rest ul, .render-rest ol, .render-rest pre {
+    margin-left: 2em;
+    margin-top: 0.5em;
+}
+.goblet .render-rest p {
+    padding-top: 0.5em;
+}
+.goblet .render-rest h1,
+.goblet .render-rest h2,
+.goblet .render-rest h3,
+.goblet .render-rest h4,
+.goblet .render-rest h5,
+.goblet .render-rest h6 {
+    background-color: #fff;
+    padding: 0.5em 0px 0px 0px;
+
+}
+
+.goblet .render-man ul, .render-man ol, .render-man pre {
+    margin-left: 2em;
+    margin-top: 0.5em;
+}
+.goblet .render-man p {
+}
+.goblet .render-man h1,
+.goblet .render-man h2,
+.goblet .render-man h3,
+.goblet .render-man h4,
+.goblet .render-man h5,
+.goblet .render-man h6 {
+    background-color: #fff;
+    padding: 0.5em 0px 0px 0px;
+
+}
+.goblet .render-man hr {
+    display: none;
 }
