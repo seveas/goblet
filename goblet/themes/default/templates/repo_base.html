@@ -30,7 +30,7 @@ init_clone_urls();
     <li><a class="tabnav-tab {% if tags %}selected{% endif %}" href="{{ url_for('tags', repo=repo.name) }}">Tags</a></li>
     <li class="selector"><select id="branches" class="chzn-select">
         {% if ref_for_commit not in repo.branches() %}
-        <option value="{{ ref_for_commit }}" selected="selected">commit {{ ref_for_commit[:7] }}</option>
+        <option value="{{ ref_for_commit }}" selected="selected">{% if ref_for_commit in repo.tags() %}tag {{ ref_for_commit }}{% else %}commit {{ ref_for_commit[:7] }}{% endif %}</option>
         {% endif %}
         {% for branch in repo.branches() %}
         <option value="{{ branch }}" {% if branch == ref_for_commit %}selected="selected"{% endif %}>{{ branch }}</option>

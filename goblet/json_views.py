@@ -10,6 +10,8 @@ class TreeChangedView(PathView):
         ref, path, tree, _ = self.split_ref(repo, path)
         if ref not in repo:
             ref = repo.lookup_reference('refs/heads/%s' % ref).hex
+        if hasattr(repo[ref], 'target'):
+            ref = repo[repo[ref].target].hex
         cfile = os.path.join(repo.cpath, 'dirlog_%s_%s.json' % (ref, path.replace('/', '_')))
         if not os.path.exists(cfile):
             tree = repo[ref].tree

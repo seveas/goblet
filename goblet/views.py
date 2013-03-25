@@ -132,9 +132,8 @@ class PathView(RepoBaseView):
                     path = path.replace(ref, '')[1:]
                     ref = repo.lookup_reference('refs/tags/%s' % ref).hex
                     if repo[ref].type == pygit2.GIT_OBJ_TAG:
-                        tree = repo[repo[ref].target].tree
-                    else:
-                        tree = repo[ref].tree
+                        ref = repo[repo[ref].target].hex
+                    tree = repo[ref].tree
                     break
             else:
                 # Or a commit
