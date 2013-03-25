@@ -114,7 +114,7 @@ def code(repo, ref, path, entry, lexer, data=None, blame=False):
         html = re.sub(r'(<a name="l-(\d+)"></a><span class="[^"]+">\s*)(\d+)', replace, html)
     return html
 
-add_plain_link = Markup('''<script type="text/javascript">$('.actions').prepend('<a href="' + window.location + '?plain=1">plain</a> | ')</script>''')
+add_plain_link = Markup('''<script type="text/javascript">add_plain_link()</script>''')
 @renderer
 def markdown(repo, ref, path, entry):
     data = decode(entry.to_object().data)

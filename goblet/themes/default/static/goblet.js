@@ -31,3 +31,6 @@ function init_clone_urls() {
     });
     $('#cloneurl').attr('value', $('.urllink').first().children('span').html());
 }
+function add_plain_link() {
+    $('.actions').prepend('<a href="' + window.location + '?plain=1">plain</a> | ')
+}
