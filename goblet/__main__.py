@@ -23,6 +23,7 @@ class Defaults:
     SENDER         = 'webmaster@localhost'
     CLONE_URLS_BASE = {}
     DEBUG          = os.environ.get('GOBLET_DEBUG', 'False').lower() == 'true'
+    THEME          = 'default'
     ABOUT = """<h2>About git &amp; goblet</h2>
 <p>
 <a href="http://git-scm.com">Git</a> is a free and open source distributed
@@ -51,6 +52,9 @@ app = Goblet(__name__)
 app.config.from_object(Defaults)
 if 'GOBLET_SETTINGS' in os.environ:
     app.config.from_envvar("GOBLET_SETTINGS")
+
+app.template_folder = os.path.join('themes', app.config['THEME'], 'templates')
+app.static_folder = os.path.join('themes', app.config['THEME'], 'static')
 
 # Configure parts of flask/jinja
 goblet.filters.register_filters(app)
