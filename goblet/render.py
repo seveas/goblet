@@ -5,6 +5,7 @@ import pygments.formatters
 import pygments.lexers
 from goblet.encoding import decode
 from goblet.views import blob_link
+from whelk import shell
 
 import re
 import markdown as markdown_
@@ -12,15 +13,15 @@ import docutils.core
 import time
 
 renderers = {}
-image_exts = ('.gif', '.png', '.bmp', '.tif', '.tiff', '.jpg', '.jpeg', 'ppm',
-    'pnm', 'pbm', 'pgm', 'webp')
+image_exts = ('.gif', '.png', '.bmp', '.tif', '.tiff', '.jpg', '.jpeg', '.ppm',
+    '.pnm', '.pbm', '.pgm', '.webp')
 
 def render(repo, ref, path, entry, plain=False, blame=False):
     renderer = detect_renderer(entry)
-    if plain and renderer[0] in ('rest', 'markdown'):
+    if plain and renderer[0] in ('rest', 'markdown', 'man'):
         renderer = ('code', pygments.lexers.get_lexer_for_filename(path))
     if blame:
-        if renderer[0] in ('rest', 'markdown'):
+        if renderer[0] in ('rest', 'markdown', 'man'):
             renderer = ('code', pygments.lexers.get_lexer_for_filename(path), None, True)
         elif renderer[0] == 'code':
             renderer = list(renderer[:2]) + [None, True]
@@ -28,14 +29,17 @@ def render(repo, ref, path, entry, plain=False, blame=False):
 
 def detect_renderer(entry):
     name = entry.name.lower()
+    ext = name[name.rfind('.'):]
     # First: filename to detect images
-    if name.endswith(image_exts):
+    if ext in image_exts:
         return 'image',
     # Known formatters
-    if name.endswith(('.rst', '.rest')):
+    if ext in ('.rst', '.rest'):
         return 'rest',
-    if name.endswith('.md'):
+    if ext == '.md':
         return 'markdown',
+    if re.match('^\.[1-8](?:fun|p|posix|ssl|perl|pm|gcc|snmp)?$', ext):
+        return 'man',
     # Try pygments
     try:
         lexer = pygments.lexers.get_lexer_for_filename(name)
@@ -127,6 +131,14 @@ def rest(repo, ref, path, entry):
     }
     data = docutils.core.publish_parts(data,settings_overrides=settings,writer_name='html')
     return Markup(data['body']) + add_plain_link
+
+@renderer
+def man(repo, ref, path, entry):
+    res = shell.groff('-Thtml', '-P', '-l', '-mandoc', input=entry.to_object().data)
+    if res.returncode != 0:
+        raise RuntimeError(res.stderr)
+    data = decode(res.stdout)
+    return Markup(data[data.find('<body>')+6:data.find('</body>')]) + add_plain_link
 
 @renderer
 def binary(repo, ref, path, entry):
