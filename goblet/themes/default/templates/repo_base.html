@@ -46,5 +46,10 @@ $("#branches").change(switch_branch);
 var x1 = $("#branches_chzn").offset().top;
 var x2 = $(".tabnav-tabs a").first().offset().top;
 $("#branches_chzn").css({bottom: (x1-x2+1) + 'px'});
+$(["#branches_chzn", ".chzn-drop", ".chzn-search input"]).each(
+function(idx, elt) {
+    var w = $($(elt)[0]).width();
+    $(elt).css({width: (w+15)+'px'});
+});
 </script>
 {% endblock %}
