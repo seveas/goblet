@@ -4,7 +4,6 @@ import pygments
 import pygments.formatters
 import pygments.lexers
 from goblet.encoding import decode
-from goblet.views import blob_link
 from whelk import shell
 
 import re
@@ -14,7 +13,7 @@ import time
 
 renderers = {}
 image_exts = ('.gif', '.png', '.bmp', '.tif', '.tiff', '.jpg', '.jpeg', '.ppm',
-    '.pnm', '.pbm', '.pgm', '.webp')
+    '.pnm', '.pbm', '.pgm', '.webp', '.ico')
 
 def render(repo, ref, path, entry, plain=False, blame=False):
     renderer = detect_renderer(entry)
@@ -25,7 +24,7 @@ def render(repo, ref, path, entry, plain=False, blame=False):
             renderer = ('code', pygments.lexers.get_lexer_for_filename(path), None, True)
         elif renderer[0] == 'code':
             renderer = list(renderer[:2]) + [None, True]
-    return renderers[renderer[0]](repo, ref, path, entry, *renderer[1:])
+    return renderer[0], renderers[renderer[0]](repo, ref, path, entry, *renderer[1:])
 
 def detect_renderer(entry):
     name = entry.name.lower()
@@ -94,6 +93,7 @@ def plain(repo, ref, path, entry):
 
 @renderer
 def code(repo, ref, path, entry, lexer, data=None, blame=False):
+    from goblet.views import blob_link
     data = decode(data or entry.to_object().data)
     formatter = pygments.formatters.html.HtmlFormatter(linenos='inline', linenospecial=10, encoding='utf-8', anchorlinenos=True, lineanchors='l')
     html = Markup(pygments.highlight(data, lexer, formatter).decode('utf-8'))

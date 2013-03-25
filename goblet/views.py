@@ -1,6 +1,7 @@
 from flask import render_template, current_app, redirect, url_for, request, send_file
 from flask.views import View
 from goblet.encoding import decode
+from goblet.render import render
 import os
 import glob
 import pygit2
@@ -204,11 +205,13 @@ class RepoView(TreeView):
         tree = repo.head.tree
         if 'q' in request.args:
             return self.git_grep(repo, repo.head, '')
-        readme = None
+        readme = renderer = rendered_file = None
         for file in tree:
             if re.match(r'^readme(?:.(?:txt|rst|md))?$', file.name, flags=re.I):
                 readme = file
-        return {'readme': readme, 'tree': tree, 'ref': repo.ref_for_commit(repo.head), 'path': '', 'show_clone_urls': True}
+                renderer, rendered_file = render(repo, repo.head, '', readme)
+        return {'readme': readme, 'tree': tree, 'ref': repo.ref_for_commit(repo.head),
+                'path': '', 'show_clone_urls': True, 'renderer': renderer, 'rendered_file': rendered_file}
 
 class BlobView(PathView):
     template_name = 'blob.html'
@@ -216,7 +219,8 @@ class BlobView(PathView):
     def handle_request(self, repo, path):
         ref, path, tree, file = self.split_ref(repo, path, expects_file=True)
         folder = '/' in path and path[:path.rfind('/')] or None
-        return {'tree': tree, 'ref': ref, 'path': path, 'file': file, 'folder': folder}
+        renderer, rendered_file  = render(repo, ref, path, file, blame=request.endpoint == 'blame', plain=request.args.get('plain') == '1')
+        return {'tree': tree, 'ref': ref, 'path': path, 'file': file, 'folder': folder, 'rendered_file': rendered_file, 'renderer': renderer}
 
 class RawView(PathView):
     template = None

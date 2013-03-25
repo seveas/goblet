@@ -12,8 +12,8 @@
 <a rel="nofollow" href="{{ history_link(repo, ref, path) }}">history</a>
 </span>
 </h2>
-<div class="blob-inner">
-{{ render(repo, ref, path, file, blame=request.endpoint == 'blame', plain=request.args.get('plain') == '1') }}
+<div class="blob-inner render-{{ renderer }}">
+{{ rendered_file }}
 </div>
 </div>
 {% endblock %}

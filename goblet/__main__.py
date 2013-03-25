@@ -10,7 +10,6 @@ import goblet.monkey
 import goblet.filters
 import goblet.views as v
 import goblet.json_views as j
-import goblet.render
 from goblet.encoding import decode
 
 class Defaults:
@@ -67,7 +66,6 @@ def inject_functions():
         'blob_link':    v.blob_link,
         'history_link': v.history_link,
         'file_icon':    v.file_icon,
-        'render':       goblet.render.render,
         'decode':       decode,
     }
 
