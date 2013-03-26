@@ -124,24 +124,28 @@ class Repository(pygit2.Repository):
             if search and search not in commit.message:
                 continue
             if path:
+                in_current = found_same = in_parent = False
                 try:
                     tree = commit.tree
                     for file in path[:-1]:
-                        tree = tree[path].to_object()
+                        tree = tree[file].to_object()
                     oid = tree[path[-1]].oid
+                    in_current = True
                 except KeyError:
-                    break
+                    pass
                 try:
                     for parent in commit.parents:
                         tree = parent.tree
                         for file in path[:-1]:
-                            tree = tree[path].to_object()
-                        if tree[path[-1]].oid != oid:
+                            tree = tree[file].to_object()
+                        if tree[path[-1]].oid == oid:
+                            in_parent = found_same = True
                             break
-                    else:
-                        continue
+                        in_parent = True
                 except KeyError:
                     pass
+                if in_current == in_parent or found_same:
+                    continue
 
             num += 1
             if num < skip:

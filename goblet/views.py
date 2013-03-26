@@ -311,7 +311,7 @@ class HistoryView(PathView,RefView):
             prev_page = page - 1
 
         log = list(repo.get_commits(ref, skip=self.commits_per_page * (page-1), count=self.commits_per_page, file=path))
-        if log and log[-1].parents:
+        if log and log[-1].parents and len(log) == self.commits_per_page:
             next_page = page + 1
         shas = [x.hex for x in log]
         return {'ref': repo.ref_for_commit(ref), 'log': log, 'shas': shas, 'refs': repo.reverse_refs, 'next_page': next_page, 'prev_page': prev_page}
