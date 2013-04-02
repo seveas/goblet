@@ -17,8 +17,11 @@ image_exts = ('.gif', '.png', '.bmp', '.tif', '.tiff', '.jpg', '.jpeg', '.ppm',
 
 def render(repo, ref, path, entry, plain=False, blame=False):
     renderer = detect_renderer(entry)
-    if plain and renderer[0] in ('rest', 'markdown', 'man'):
-        renderer = ('code', pygments.lexers.get_lexer_for_filename(path))
+    if plain:
+        if renderer[0] in ('rest', 'markdown'):
+            renderer = ('code', pygments.lexers.get_lexer_for_filename(path))
+        elif renderer[1] == 'man':
+            renderer = ('code', pygments.lexers.get_lexer_by_name('groff'))
     if blame:
         if renderer[0] in ('rest', 'markdown', 'man'):
             renderer = ('code', pygments.lexers.get_lexer_for_filename(path), None, True)
