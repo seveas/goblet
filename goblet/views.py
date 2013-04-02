@@ -359,17 +359,18 @@ class CommitView(RefView):
         else:
             diff = ref.parents[0].tree.diff(ref.tree)
             ignore = []
-            for id, dfile in enumerate(diff.changes['files'][:]):
-                for tree in (ref.tree, ref.parents[0].tree):
-                    try:
-                        path = dfile[1].split('/')
-                        for name in path:
-                            tree = tree[name].to_object()
-                        if '\0' in tree.data:
-                            ignore.append(id)
-                            break
-                    except KeyError:
-                        pass
+            if diff.changes:
+                for id, dfile in enumerate(diff.changes['files'][:]):
+                    for tree in (ref.tree, ref.parents[0].tree):
+                        try:
+                            path = dfile[1].split('/')
+                            for name in path:
+                                tree = tree[name].to_object()
+                            if '\0' in tree.data:
+                                ignore.append(id)
+                                break
+                        except KeyError:
+                            pass
             diff_, stat = realdiff(diff,ignore)
         return {'commit': ref, 'diff': diff, 'formatdiff': diff_, 'stat': stat}
 
