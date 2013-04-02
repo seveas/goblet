@@ -19,10 +19,11 @@ Now you can install goblet and all its dependencies with a single apt command::
 
 Non-python dependencies
 -----------------------
-The only non-python dependencies are xz and git. Goblet does require a patched
-git though. If you do not use the packages I provide, please build your own git
-with Jeff King's blame-tree patches applied. You can find these, rebased
-against the latest git version, as the last four patches on `my git clone`_
+The only non-python dependencies are xz, git and groff. Goblet does require a
+patched git though. If you do not use the packages I provide, please build
+your own git with Jeff King's blame-tree patches applied. You can find
+these, rebased against the latest git version, as the last four patches on `my
+git clone`_
 
 Python dependencies
 -------------------
