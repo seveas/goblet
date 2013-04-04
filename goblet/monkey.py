@@ -192,7 +192,8 @@ class Repository(pygit2.Repository):
     def blame(self, commit, path):
         if hasattr(commit, 'hex'):
             commit = commit.hex
-        contents = decode(self.git('blame', '-p', commit, '--', path).stdout).splitlines()
+        contents = decode(self.git('blame', '-p', commit, '--', path).stdout).split('\n')
+        contents.pop(-1)
         commits = {}
         last_commit = None
         lines = []
