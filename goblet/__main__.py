@@ -1,3 +1,7 @@
+# Goblet - Web based git repository browser
+# Copyright (C) 2013 Dennis Kaarsemaker
+# See the LICENSE file for licensing details
+
 # If we're running from a git checkout, make sure we use the checkout
 import os, sys
 git_checkout = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

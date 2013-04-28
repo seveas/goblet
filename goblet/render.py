@@ -1,3 +1,7 @@
+# Goblet - Web based git repository browser
+# Copyright (C) 2013 Dennis Kaarsemaker
+# See the LICENSE file for licensing details
+
 from flask import url_for
 from jinja2 import Markup, escape
 import pygments

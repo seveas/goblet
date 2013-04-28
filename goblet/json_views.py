@@ -1,3 +1,7 @@
+# Goblet - Web based git repository browser
+# Copyright (C) 2013 Dennis Kaarsemaker
+# See the LICENSE file for licensing details
+
 from goblet.views import PathView
 from goblet.filters import shortmsg
 from jinja2 import escape

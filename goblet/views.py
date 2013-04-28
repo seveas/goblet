@@ -1,3 +1,7 @@
+# Goblet - Web based git repository browser
+# Copyright (C) 2013 Dennis Kaarsemaker
+# See the LICENSE file for licensing details
+
 from flask import render_template, current_app, redirect, url_for, request, send_file
 from flask.views import View
 from goblet.encoding import decode

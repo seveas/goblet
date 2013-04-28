@@ -1,3 +1,6 @@
+.. Goblet - Web based git repository browser
+   Copyright (C) 2013 Dennis Kaarsemaker
+   See the LICENSE file for licensing details
 Installing goblet
 =================
 Goblet is easiest to install on Ubuntu 12.10, as I provide packages for it

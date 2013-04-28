@@ -1,3 +1,7 @@
+# Goblet - Web based git repository browser
+# Copyright (C) 2013 Dennis Kaarsemaker
+# See the LICENSE file for licensing details
+
 import os
 import pygit2
 from flask import current_app

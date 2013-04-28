@@ -1,3 +1,6 @@
+.. Goblet - Web based git repository browser
+   Copyright (C) 2013 Dennis Kaarsemaker
+   See the LICENSE file for licensing details
 Configuring goblet
 ==================
 Goblet can be run without any configuration for a quick test, using the
