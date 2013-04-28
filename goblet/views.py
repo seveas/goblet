@@ -366,7 +366,7 @@ class CommitView(RefView):
                             path = dfile[1].split('/')
                             for name in path:
                                 tree = tree[name].to_object()
-                            if '\0' in tree.data:
+                            if tree.type == pygit2.GIT_OBJ_BLOB and '\0' in tree.data:
                                 ignore.append(id)
                                 break
                         except KeyError:
