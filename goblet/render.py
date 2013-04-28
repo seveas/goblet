@@ -23,8 +23,10 @@ def render(repo, ref, path, entry, plain=False, blame=False):
         elif renderer[1] == 'man':
             renderer = ('code', pygments.lexers.get_lexer_by_name('groff'))
     if blame:
-        if renderer[0] in ('rest', 'markdown', 'man'):
+        if renderer[0] in ('rest', 'markdown'):
             renderer = ('code', pygments.lexers.get_lexer_for_filename(path), None, True)
+        elif renderer[0] == 'man':
+            renderer = ('code', pygments.lexers.get_lexer_by_name('groff'), None, True)
         elif renderer[0] == 'code':
             renderer = list(renderer[:2]) + [None, True]
     return renderer[0], renderers[renderer[0]](repo, ref, path, entry, *renderer[1:])
