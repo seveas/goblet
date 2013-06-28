@@ -103,7 +103,10 @@ def plain(repo, ref, path, entry):
 @renderer
 def code(repo, ref, path, entry, lexer, data=None, blame=False):
     from goblet.views import blob_link
-    data = decode(data or repo[entry.oid].data)
+    try:
+        data = decode(data or repo[entry.oid].data)
+    except:
+        data = '(Binary data)'
     formatter = pygments.formatters.html.HtmlFormatter(linenos='inline', linenospecial=10, encoding='utf-8', anchorlinenos=True, lineanchors='l')
     html = Markup(pygments.highlight(data, lexer, formatter).decode('utf-8'))
     if blame:

@@ -47,7 +47,7 @@ See the LICENSE file for licensing details
 <table class="diffstat">
 {% for file in diff %}
 <tr>
-  <th>{{ file.new_file_path }}</th>
+  <th>{{ decode(file.new_file_path) }}</th>
   {% if file.hunks %}
   <td>
     {% if stat[file.new_file_path]['+'] %}+{{ stat[file.new_file_path]['+'] }}{% endif %}{% if stat[file.new_file_path]['-'] %}{% if stat[file.new_file_path]['+'] %}/{% endif %}-{{ stat[file.new_file_path]['-'] }}{% endif %}
@@ -64,7 +64,7 @@ See the LICENSE file for licensing details
 {% for file in diff %}
 <div class="blob">
 {% set file_link = tree_link(repo, commit.hex, path, file.new_file_path) %}
-<h2><img src="{{ file_icon(file.new_file_path) }}" /> <a href="{{ file_link }}">{{ file.new_file_path }}</a>
+<h2><img src="{{ file_icon(file.new_file_path) }}" /> <a href="{{ file_link }}">{{ decode(file.new_file_path) }}</a>
 <span class="actions">
 {% if commit.parents %}
 {% set old_file_link = tree_link(repo, commit.parents[0].hex, path, file.old_file_path) %}
