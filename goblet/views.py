@@ -357,26 +357,20 @@ class CommitView(RefView):
 
     def handle_request(self, repo, ref=None):
         ref = self.lookup_ref(repo, ref)
+        stat = {}
         if not ref.parents:
-            diff = {'changes': {'files': [(None, x) for x in repo.ls_tree(ref.tree)]}}
-            diff_, stat = fakediff(ref.tree)
+            diff = ref.tree.diff_to_tree(swap=True)
         else:
-            diff = ref.parents[0].tree.diff(ref.tree)
-            ignore = []
-            if diff.changes:
-                for id, dfile in enumerate(diff.changes['files'][:]):
-                    for tree in (ref.tree, ref.parents[0].tree):
-                        try:
-                            path = dfile[1].split('/')
-                            for name in path:
-                                tree = tree[name].to_object()
-                            if tree.type == pygit2.GIT_OBJ_BLOB and '\0' in tree.data:
-                                ignore.append(id)
-                                break
-                        except KeyError:
-                            pass
-            diff_, stat = realdiff(diff,ignore)
-        return {'commit': ref, 'diff': diff, 'formatdiff': diff_, 'stat': stat}
+            diff = ref.parents[0].tree.diff_to_tree(ref.tree)
+        for file in diff:
+            s = stat[file.new_file_path] = {'-': 0, '+': 0}
+            for hunk in file.hunks:
+                hs = [x[0] for x in hunk.lines]
+                s['-'] += hs.count('-')
+                s['+'] += hs.count('+')
+                s['%'] = int(100.0 * s['+'] / (s['-']+s['+']))
+        stat[None] = {'-': sum([x['-'] for x in stat.values()]), '+': sum([x['+'] for x in stat.values()])}
+        return {'commit': ref, 'diff': diff, 'stat': stat}
 
 class PatchView(RefView):
     def handle_request(self, repo, ref=None):
@@ -384,55 +378,6 @@ class PatchView(RefView):
         # XXX port to pygit2
         data = repo.git('format-patch', '--stdout', '%s^..%s' % (ref.hex, ref.hex)).stdout
         return (data, 200, [{'Content-Type': 'text/plain', 'Content-Encoding': 'utf-8'}])
-
-def fakediff(tree):
-    files = {}
-    fstat = {}
-    for file in tree:
-        if stat.S_ISDIR(file.filemode):
-            f2, s2 = fakediff(file.to_object())
-            for f in f2:
-                files[os.path.join(file.name, f)] = f2[f]
-                fstat[os.path.join(file.name, f)] = s2[f]
-            continue
-
-        data = file.to_object().data
-        if '\0' in data:
-            # Binary file, ignore
-            continue
-        data = decode(data)
-        lines = data.strip().split('\n')
-        fstat[file.name] = {'+': len(lines), '-': 0}
-        files[file.name] = [{
-            'header': '@@ -0,0 +1,%d' % len(lines),
-            'data': [(x, pygit2.GIT_DIFF_LINE_ADDITION) for x in lines],
-            'new_start': 1,
-            'old_start': 0,
-        }]
-    fstat[None] = {'-': sum([x['-'] for x in fstat.values()]), '+': sum([x['+'] for x in fstat.values()])}
-    return files, fstat
-
-def realdiff(diff, ignore):
-    files = {}
-    stat = {}
-    # Can happen with subproject-only commits
-    if not diff.changes:
-        return {}, {None: {'+': 0, '-': 0}}
-    for id, file in enumerate(diff.changes['files']):
-        if id in ignore:
-            continue
-        files[file[1]] = []
-        stat[file[1]] = {'-': 0, '+': 0}
-    for hunk in diff.changes.get('hunks', []):
-        if hunk.new_file not in files:
-            continue
-        files[hunk.new_file].append(hunk)
-        s = stat[hunk.new_file]
-        s['-'] += len([x for x in hunk.data if x[1] == pygit2.GIT_DIFF_LINE_DELETION])
-        s['+'] += len([x for x in hunk.data if x[1] == pygit2.GIT_DIFF_LINE_ADDITION])
-        s['%'] = int(100.0 * s['+'] / (s['-']+s['+']))
-    stat[None] = {'-': sum([x['-'] for x in stat.values()]), '+': sum([x['+'] for x in stat.values()])}
-    return files, stat
 
 Fakefile = namedtuple('Fakefile', ('name', 'filemode'))
 def tree_link(repo, ref, path, file):

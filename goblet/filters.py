@@ -111,5 +111,9 @@ def ornull(data):
 def highlight(data, search):
     return Markup(data).replace(Markup(search), Markup('<span class="searchresult">%s</span>' % Markup(search)))
 
+@filter
+def dlength(diff):
+    return len(list(diff))
+
 def register_filters(app):
     app.jinja_env.filters.update(filters)

@@ -22,7 +22,7 @@ See the LICENSE file for licensing details
 {% if commit.parents %}
 <table class="parents">
 <tr>
-<td>Parent&nbsp;commit{% if commit.parents|length > 1%}s{% endif %}</td>
+<td>Parent&nbsp;commit{% if commit.parents|dlength > 1%}s{% endif %}</td>
 <td>
 {% for parent in commit.parents %}
 <a href="{{ url_for('commit', repo=repo.name, ref=parent.hex) }}">{{ parent.hex[:7] }}</a> {{ parent.message|shortmsg }}<br />
@@ -40,20 +40,20 @@ See the LICENSE file for licensing details
 </div>
 <div class="diff">
 <h2>
-    Showing {{ diff.changes['files']|length }} changed file{% if diff.changes['files']|length != 1 %}s{% endif %}
+    Showing {{ diff|dlength }} changed file{% if diff|dlength != 1 %}s{% endif %}
     ({{ stat[None]['+'] }} addition{% if stat[None]['+'] != 1 %}s{% endif %},
     {{ stat[None]['-'] }} deletion{% if stat[None]['-'] != 1 %}s{% endif %})
 </h2>
 <table class="diffstat">
-{% for file in diff.changes['files'] %}
+{% for file in diff %}
 <tr>
-  <th>{{ file[1] }}</th>
-  {% if file[1] in stat %}
+  <th>{{ file.new_file_path }}</th>
+  {% if file.hunks %}
   <td>
-    {% if stat[file[1]]['+'] %}+{{ stat[file[1]]['+'] }}{% endif %}{% if stat[file[1]]['-'] %}{% if stat[file[1]]['+'] %}/{% endif %}-{{ stat[file[1]]['-'] }}{% endif %}
+    {% if stat[file.new_file_path]['+'] %}+{{ stat[file.new_file_path]['+'] }}{% endif %}{% if stat[file.new_file_path]['-'] %}{% if stat[file.new_file_path]['+'] %}/{% endif %}-{{ stat[file.new_file_path]['-'] }}{% endif %}
   </td>
   <td>
-    <div class="statbar"><div style="width: {{ stat[file[1]]['%'] }}%">&nbsp;</div></div>
+    <div class="statbar"><div style="width: {{ stat[file.new_file_path]['%'] }}%">&nbsp;</div></div>
   </td>
   {% else %}
     <td colspan="2">(Binary file)</td>
@@ -61,40 +61,38 @@ See the LICENSE file for licensing details
 </tr>
 {% endfor %}
 </table>
-{% for file in diff.changes['files'] %}
+{% for file in diff %}
 <div class="blob">
-<h2><img src="{{ file_icon(file[1]) }}" /> <a href="{{ tree_link(repo, commit.hex, path, file[1]) }}">{{ file[1] }}</a>
+{% set file_link = tree_link(repo, commit.hex, path, file.new_file_path) %}
+<h2><img src="{{ file_icon(file.new_file_path) }}" /> <a href="{{ file_link }}">{{ file.new_file_path }}</a>
 <span class="actions">
-{% set file_link = tree_link(repo, commit.hex, path, file[1]) %}
 {% if commit.parents %}
-{% set old_file_link = tree_link(repo, commit.parents[0].hex, path, file[1]) %}
+{% set old_file_link = tree_link(repo, commit.parents[0].hex, path, file.old_file_path) %}
 {% endif %}
 <a href="{{ file_link }}">view</a> |
-<a rel="nofollow" href="{{ raw_link(repo, commit.hex, path, file[1]) }}">raw</a> |
-<a rel="nofollow" href="{{ blame_link(repo, commit.hex, path, file[1]) }}">blame</a> |
-<a rel="nofollow" href="{{ history_link(repo, commit.hex, path, file[1]) }}">history</a>
+<a rel="nofollow" href="{{ raw_link(repo, commit.hex, path, file.new_file_path) }}">raw</a> |
+<a rel="nofollow" href="{{ blame_link(repo, commit.hex, path, file.new_file_path) }}">blame</a> |
+<a rel="nofollow" href="{{ history_link(repo, commit.hex, path, file.new_file_path) }}">history</a>
 </span>
 </h2>
 <table class="blobdiff">
-{% if not formatdiff[file[1]] %}
+{% if not file.hunks %}
 <tr><td class="lineno">&nbsp;</td><td class="lineno">&nbsp;</td><td><pre>Binary file change</pre></td></tr>
 {% endif %}
-{% for hunk in formatdiff[file[1]] %}
+{% for hunk in file.hunks %}
 {% set old = hunk.old_start %}
 {% set new = hunk.new_start %}
-<tr><td class="lineno">&hellip;</td><td class="lineno">&hellip;</td><td><pre>{{ hunk.header }}</pre></td></tr>
-{% for line in hunk.data %}
-{% if line[1] == 32 %}
-<tr class="context"><td class="lineno"><a href="{{ old_file_link }}#l-{{ old }}">{{ old }}</a></td><td class="lineno"><a href="{{ file_link }}#l-{{ new }}">{{ new }}</a></td><td class="diffcontent"><pre>{{ decode(line[0]) }}</pre></td></tr>
+<tr><td class="lineno">&hellip;</td><td class="lineno">&hellip;</td><td><pre>@@ -{{old}},{{hunk.old_lines}} + {{new}},{{hunk.new_lines}}</pre></td></tr>
+{% for status,line in hunk.lines %}
+{% if status == ' ' %}
+<tr class="context"><td class="lineno"><a href="{{ old_file_link }}#l-{{ old }}">{{ old }}</a></td><td class="lineno"><a href="{{ file_link }}#l-{{ new }}">{{ new }}</a></td><td class="diffcontent"><pre>{{ decode(line) }}</pre></td></tr>
 {% set old = old + 1 %}{% set new = new +1 %}
-{% elif line[1] == 45 %}
-<tr class="deletion"><td class="lineno"><a href="{{ old_file_link }}#l-{{ old }}">{{ old }}</a></td><td class="lineno">&nbsp;</td><td class="diffcontent"><pre>{{ decode(line[0]) }}</pre></td></tr>
+{% elif status == '-' %}
+<tr class="deletion"><td class="lineno"><a href="{{ old_file_link }}#l-{{ old }}">{{ old }}</a></td><td class="lineno">&nbsp;</td><td class="diffcontent"><pre>{{ decode(line) }}</pre></td></tr>
 {% set old = old + 1 %}
-{% elif line[1] == 43 %}
-<tr class="addition"><td class="lineno">&nbsp;</td><td class="lineno"><a href="{{ file_link }}#l-{{ new }}">{{ new }}</a></td><td class="diffcontent"><pre>{{ decode(line[0]) }}</pre></td></tr>
+{% elif status == '+' %}
+<tr class="addition"><td class="lineno">&nbsp;</td><td class="lineno"><a href="{{ file_link }}#l-{{ new }}">{{ new }}</a></td><td class="diffcontent"><pre>{{ decode(line) }}</pre></td></tr>
 {% set new = new + 1 %}
-{% elif line[1] == 66 %}
-<tr><td class="lineno">&nbsp;</td><td class="lineno">&nbsp;</td>(Binary change)</td></tr>
 {% endif %}
 {% endfor %}
 {% endfor %}
