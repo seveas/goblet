@@ -132,7 +132,7 @@ class Repository(pygit2.Repository):
                 try:
                     tree = commit.tree
                     for file in path[:-1]:
-                        tree = repo[tree[file].hex]
+                        tree = self[tree[file].hex]
                     oid = tree[path[-1]].oid
                     in_current = True
                 except KeyError:
@@ -141,14 +141,16 @@ class Repository(pygit2.Repository):
                     for parent in commit.parents:
                         tree = parent.tree
                         for file in path[:-1]:
-                            tree = repo[tree[file].hex]
+                            tree = self[tree[file].hex]
                         if tree[path[-1]].oid == oid:
                             in_parent = found_same = True
                             break
                         in_parent = True
                 except KeyError:
                     pass
-                if in_current == in_parent or found_same:
+                if not in_current and not in_parent:
+                    continue
+                if found_same:
                     continue
 
             num += 1
