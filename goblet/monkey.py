@@ -188,7 +188,7 @@ class Repository(pygit2.Repository):
         """Get a dict of {name: hex} for commits that last changed files in a directory"""
         data = self.git('blame-tree', '--max-depth=1', commit.hex, '--', os.path.join('.', path)).stdout
         data = data.decode('utf-8').splitlines()
-        data = [x.split() for x in data]
+        data = [x.split(None, 1) for x in data]
         if path:
             data = [(p[p.rfind('/')+1:], m) for (m,p) in data]
         else:
