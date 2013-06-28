@@ -20,7 +20,7 @@ image_exts = ('.gif', '.png', '.bmp', '.tif', '.tiff', '.jpg', '.jpeg', '.ppm',
     '.pnm', '.pbm', '.pgm', '.webp', '.ico')
 
 def render(repo, ref, path, entry, plain=False, blame=False):
-    renderer = detect_renderer(entry)
+    renderer = detect_renderer(repo, entry)
     if plain:
         if renderer[0] in ('rest', 'markdown'):
             renderer = ('code', pygments.lexers.get_lexer_for_filename(path))
@@ -35,7 +35,7 @@ def render(repo, ref, path, entry, plain=False, blame=False):
             renderer = list(renderer[:2]) + [None, True]
     return renderer[0], renderers[renderer[0]](repo, ref, path, entry, *renderer[1:])
 
-def detect_renderer(entry):
+def detect_renderer(repo, entry):
     name = entry.name.lower()
     ext = name[name.rfind('.'):]
     # First: filename to detect images
@@ -55,7 +55,7 @@ def detect_renderer(entry):
     except pygments.util.ClassNotFound:
         pass
 
-    obj = entry.to_object()
+    obj = repo[entry.oid]
     if obj.size > 1024*1024*5:
         return 'binary',
     data = obj.data
@@ -96,14 +96,14 @@ def image(repo, ref, path, entry):
 
 @renderer
 def plain(repo, ref, path, entry):
-    data = escape(decode(entry.to_object().data))
+    data = escape(decode(repo[entry.oid].data))
     data = re.sub(r'(https?://(?:[-a-zA-Z0-9\._~:/?#\[\]@!\'()*+,;=]+|&amp;)+)', Markup(r'<a href="\1">\1</a>'), data)
     return Markup(u"<pre>%s</pre>" % data)
 
 @renderer
 def code(repo, ref, path, entry, lexer, data=None, blame=False):
     from goblet.views import blob_link
-    data = decode(data or entry.to_object().data)
+    data = decode(data or repo[entry.oid].data)
     formatter = pygments.formatters.html.HtmlFormatter(linenos='inline', linenospecial=10, encoding='utf-8', anchorlinenos=True, lineanchors='l')
     html = Markup(pygments.highlight(data, lexer, formatter).decode('utf-8'))
     if blame:
@@ -126,12 +126,12 @@ def code(repo, ref, path, entry, lexer, data=None, blame=False):
 add_plain_link = Markup('''<script type="text/javascript">add_plain_link()</script>''')
 @renderer
 def markdown(repo, ref, path, entry):
-    data = decode(entry.to_object().data)
+    data = decode(repo[entry.oid].data)
     return Markup(markdown_.Markdown(safe_mode="escape").convert(data)) + add_plain_link
 
 @renderer
 def rest(repo, ref, path, entry):
-    data = decode(entry.to_object().data)
+    data = decode(repo[entry.oid].data)
     settings = {
         'file_insertion_enabled': False,
         'raw_enabled': False,
@@ -143,7 +143,7 @@ def rest(repo, ref, path, entry):
 
 @renderer
 def man(repo, ref, path, entry):
-    res = shell.groff('-Thtml', '-P', '-l', '-mandoc', input=entry.to_object().data)
+    res = shell.groff('-Thtml', '-P', '-l', '-mandoc', input=repo[entry.oid].data)
     if res.returncode != 0:
         raise RuntimeError(res.stderr)
     data = decode(res.stdout)
@@ -151,4 +151,4 @@ def man(repo, ref, path, entry):
 
 @renderer
 def binary(repo, ref, path, entry):
-    return 'Binary file, %d bytes' % entry.to_object().size
+    return 'Binary file, %d bytes' % repo[entry.oid].size

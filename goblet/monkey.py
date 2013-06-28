@@ -94,13 +94,13 @@ class Repository(pygit2.Repository):
             if ref.startswith('refs/remotes/'):
                 continue
             if ref.startswith('refs/tags/'):
-                obj = self[self.lookup_reference(ref).hex]
+                obj = self[self.lookup_reference(ref).target.hex]
                 if obj.type == pygit2.GIT_OBJ_COMMIT:
                     ret[obj.hex].append(('tag', ref[10:]))
                 else:
                     ret[self[self[obj.target].hex].hex].append(('tag', ref[10:]))
             else:
-                ret[self.lookup_reference(ref).hex].append(('head', ref[11:]))
+                ret[self.lookup_reference(ref).target.hex].append(('head', ref[11:]))
         return ret
     reverse_refs = property(get_reverse_refs)
 
@@ -132,7 +132,7 @@ class Repository(pygit2.Repository):
                 try:
                     tree = commit.tree
                     for file in path[:-1]:
-                        tree = tree[file].to_object()
+                        tree = repo[tree[file].hex]
                     oid = tree[path[-1]].oid
                     in_current = True
                 except KeyError:
@@ -141,7 +141,7 @@ class Repository(pygit2.Repository):
                     for parent in commit.parents:
                         tree = parent.tree
                         for file in path[:-1]:
-                            tree = tree[file].to_object()
+                            tree = repo[tree[file].hex]
                         if tree[path[-1]].oid == oid:
                             in_parent = found_same = True
                             break
@@ -162,7 +162,7 @@ class Repository(pygit2.Repository):
         tags = [self.lookup_reference(x) for x in self.listall_references() if x.startswith('refs/tags')]
         if not tags:
             return 'g' + commit[:7]
-        tags = [(tag.name[10:], self[tag.hex]) for tag in tags]
+        tags = [(tag.name[10:], self[tag.target.hex]) for tag in tags]
         tags = dict([(hasattr(obj, 'target') and self[obj.target].hex or obj.hex, name) for name, obj in tags])
         count = 0
         for parent in self.walk(commit, pygit2.GIT_SORT_TIME):
@@ -177,7 +177,7 @@ class Repository(pygit2.Repository):
         ret = []
         for entry in tree:
             if stat.S_ISDIR(entry.filemode):
-                ret += self.ls_tree(entry.to_object(), os.path.join(path, entry.name))
+                ret += self.ls_tree(repo[entry.hex], os.path.join(path, entry.name))
             else:
                 ret.append(os.path.join(path, entry.name))
         return ret
@@ -241,7 +241,7 @@ def get_tree(tree, path):
     for dir in path:
         if dir not in tree:
             return None
-        tree = tree[dir].to_object()
+        tree = repo[tree[dir].hex]
     return tree
 
 pygit2.Repository = Repository

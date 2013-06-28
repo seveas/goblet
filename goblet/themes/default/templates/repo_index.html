@@ -19,8 +19,8 @@ See the LICENSE file for licensing details
 {{ repo.description }}
 <div class="lastchange">
 {% if repo.head %}
-Last updated <a href="{{ url_for('commit', repo=repo.name, ref=repo.head.hex) }}">{{ repo.head.commit_time|humantime }}</a>,
-by {{ repo.head.author.name }} <img src="{{ repo.head.author.email | gravatar(20) }}" />
+Last updated <a href="{{ url_for('commit', repo=repo.name, ref=repo.head.target.hex) }}">{{ repo[repo.head.target].commit_time|humantime }}</a>,
+by {{ repo[repo.head.target].author.name }} <img src="{{ repo[repo.head.target].author.email | gravatar(20) }}" />
 {% else %}
 No commits yet
 {% endif %}

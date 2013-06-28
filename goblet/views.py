@@ -75,7 +75,7 @@ class RepoBaseView(TemplateView):
             elif 'commit' in data:
                 data['ref_for_commit'] = repo.ref_for_commit(data['commit'])
             else:
-                data['ref_for_commit'] = repo.ref_for_commit(repo.head)
+                data['ref_for_commit'] = repo.ref_for_commit(repo.head.target.hex)
             return self.render(data)
         # For rawview
         return ret
@@ -86,7 +86,7 @@ class TagsView(RepoBaseView):
 
     def handle_request(self, repo):
         tags = [repo.lookup_reference(x) for x in repo.listall_references() if x.startswith('refs/tags')]
-        tags = [(tag.name[10:], repo[tag.hex]) for tag in tags]
+        tags = [(tag.name[10:], repo[tag.target.hex]) for tag in tags]
         # Annotated tags vs normal tags
         # Result is list of (name, tag or None, commit)
         tags = [(name, hasattr(tag, 'target') and tag or None, hasattr(tag, 'target') and repo[tag.target] or tag) for name, tag in tags]
@@ -127,14 +127,14 @@ class PathView(RepoBaseView):
         for ref in sorted(repo.branches(), key = lambda x: -len(x)):
             if path.startswith(ref):
                 path = path.replace(ref, '')[1:]
-                tree = repo[repo.lookup_reference('refs/heads/%s' % ref).hex].tree
+                tree = repo[repo.lookup_reference('refs/heads/%s' % ref).target.hex].tree
                 break
         else:
             # OK, maybe a tag?
             for ref in sorted(repo.tags(), key = lambda x: -len(x)):
                 if path.startswith(ref):
                     path = path.replace(ref, '')[1:]
-                    ref = repo.lookup_reference('refs/tags/%s' % ref).hex
+                    ref = repo.lookup_reference('refs/tags/%s' % ref).target.hex
                     if repo[ref].type == pygit2.GIT_OBJ_TAG:
                         ref = repo[repo[ref].target].hex
                     tree = repo[ref].tree
@@ -164,7 +164,7 @@ class PathView(RepoBaseView):
             elif not stat.S_ISDIR(entry.filemode):
                 raise NotFound("Not a folder")
             else:
-                tree = entry.to_object()
+                tree = repo[entry.oid]
         if expects_file and not file:
             raise NotFound("No such file")
 
@@ -201,11 +201,11 @@ class TreeView(PathView):
         end = min(start + 50, total)
 
         return {'results': results[start:end], 'start': start+1, 'end': end, 'total': total,
-                'ref': ref.hex, 'path': path, 'next_page': next_page, 'prev_page': prev_page}
+                'ref': ref, 'path': path, 'next_page': next_page, 'prev_page': prev_page}
 
 class RepoView(TreeView):
     def handle_request(self, repo):
-        tree = repo.head.tree
+        tree = repo[repo.head.target].tree
         if 'q' in request.args:
             return self.git_grep(repo, repo.head, '')
         readme = renderer = rendered_file = None
@@ -213,7 +213,7 @@ class RepoView(TreeView):
             if re.match(r'^readme(?:.(?:txt|rst|md))?$', file.name, flags=re.I):
                 readme = file
                 renderer, rendered_file = render(repo, repo.head, '', readme)
-        return {'readme': readme, 'tree': tree, 'ref': repo.ref_for_commit(repo.head),
+        return {'readme': readme, 'tree': tree, 'ref': repo.ref_for_commit(repo.head.target.hex),
                 'path': '', 'show_clone_urls': True, 'renderer': renderer, 'rendered_file': rendered_file}
 
 class BlobView(PathView):
@@ -234,7 +234,7 @@ class RawView(PathView):
 
         # Try to detect the mimetype
         mimetype, encoding = mimetypes.guess_type(file.name)
-        data = file.to_object().data
+        data = repo[file.hex].data
         # shbang'ed: text/plain will do
         if not mimetype and data[:2] == '#!':
             mimetype = 'text/plain'
@@ -256,14 +256,14 @@ class RawView(PathView):
 class RefView(RepoBaseView):
     def lookup_ref(self, repo, ref):
         if not ref:
-            return repo.head
+            return repo.head.target
         try:
-            ref = repo.lookup_reference('refs/heads/' + ref).hex
-        except KeyError:
+            ref = repo.lookup_reference('refs/heads/' + ref).target.hex
+        except (KeyError, ValueError):
             pass
         try:
-            ref = repo.lookup_reference('refs/tags/' + ref).hex
-        except KeyError:
+            ref = repo.lookup_reference('refs/tags/' + ref).target.hex
+        except (KeyError, ValueError):
             pass
         try:
             obj = repo[ref]

@@ -12,8 +12,11 @@ import os
 class TreeChangedView(PathView):
     def handle_request(self, repo, path):
         ref, path, tree, _ = self.split_ref(repo, path)
-        if ref not in repo:
-            ref = repo.lookup_reference('refs/heads/%s' % ref).hex
+        try:
+            if ref not in repo:
+                ref = repo.lookup_reference('refs/heads/%s' % ref).target.hex
+        except ValueError:
+            ref = repo.lookup_reference('refs/heads/%s' % ref).target.hex
         if hasattr(repo[ref], 'target'):
             ref = repo[repo[ref].target].hex
         cfile = os.path.join(repo.cpath, 'dirlog_%s_%s.json' % (ref, path.replace('/', '_')))
