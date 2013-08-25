@@ -133,6 +133,8 @@ class Repository(pygit2.Repository):
                     tree = commit.tree
                     for file in path[:-1]:
                         tree = self[tree[file].hex]
+                        if not isinstance(tree, pygit2.Tree):
+                            raise KeyError(file)
                     oid = tree[path[-1]].oid
                     in_current = True
                 except KeyError:
@@ -142,6 +144,8 @@ class Repository(pygit2.Repository):
                         tree = parent.tree
                         for file in path[:-1]:
                             tree = self[tree[file].hex]
+                            if not isinstance(tree, pygit2.Tree):
+                                raise KeyError(file)
                         if tree[path[-1]].oid == oid:
                             in_parent = found_same = True
                             break
