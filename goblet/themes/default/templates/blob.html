@@ -6,10 +6,10 @@ See the LICENSE file for licensing details
 {% extends "repo_base.html" %}
 {% block subtitle %}{{ path }}{% endblock %}
 {% block repo_content %}
-<h2><a href="{{ url_for('repo', repo=repo.name) }}">{{ repo.name }}</a> / {% if folder %}<a href="{{ url_for('tree', repo=repo.name, path='%s/%s' % (ref,folder)) }}">{{ folder }}</a>/{{ file.name }}{% else %}{{ path }}{% endif %}</h2>
+<h2><a href="{{ url_for('repo', repo=repo.name) }}">{{ repo.name }}</a> / {% if folder %}<a href="{{ url_for('tree', repo=repo.name, path='%s/%s' % (ref,folder)) }}">{{ folder }}</a>/{{ decode(file.name) }}{% else %}{{ path }}{% endif %}</h2>
 <div class="blob">
 <h2>
-<img src="{{ file_icon(file) }}" /> {{ file.name }}
+<img src="{{ file_icon(file) }}" /> {{ decode(file.name) }}
 <span class="actions">
 {% if request.endpoint != 'blob' %}<a href="{{ blob_link(repo, ref, path) }}">blob</a> | {% endif %}
 <a rel="nofollow" href="{{ raw_link(repo, ref, path) }}">raw</a> |

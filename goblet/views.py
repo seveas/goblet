@@ -384,9 +384,9 @@ def tree_link(repo, ref, path, file):
     if isinstance(file, str):
         file = Fakefile(name=file, filemode=stat.S_IFREG)
     if path:
-        tree_path = '/'.join([ref, path, file.name])
+        tree_path = '/'.join([ref, path, decode(file.name)])
     else:
-        tree_path = '/'.join([ref, file.name])
+        tree_path = '/'.join([ref, decode(file.name)])
     if stat.S_ISDIR(file.filemode):
         return url_for('tree', repo=repo.name, path=tree_path)
     if stat.S_ISREG(file.filemode):

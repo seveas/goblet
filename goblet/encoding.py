@@ -14,5 +14,5 @@ def decode(data, encoding=None):
     except UnicodeDecodeError:
         encoding = chardet.detect(data)['encoding']
         if not encoding:
-            return "(Binary change)"
+            return "(Binary data)"
         return data.decode(encoding)
