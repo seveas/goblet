@@ -31,7 +31,7 @@ class IndexView(TemplateView):
     def list_repos(self, root, level):
         for file in os.listdir(root):
             path = os.path.join(root, file)
-            if not os.path.isdir(path):
+            if not os.path.isdir(path) or not os.access(path, os.R_OK):
                 continue
             if path.endswith('.git'):
                 yield path
@@ -44,8 +44,13 @@ class IndexView(TemplateView):
     def dispatch_request(self):
         root = current_app.config['REPO_ROOT']
         depth = current_app.config['MAX_SEARCH_DEPTH']
-        repos = self.list_repos(root, depth)
-        repos = [pygit2.Repository(x) for x in sorted(repos, key=lambda x:x.lower())]
+        repos = []
+        for repo in sorted(self.list_repos(root, depth),key=lambda x:x.lower()):
+            try:
+                repos.append(pygit2.Repository(repo))
+            except KeyError:
+                # Something was unreadable
+                pass
         for keyword in request.args.get('q', '').lower().split():
             keyword = keyword.strip()
             if keyword:
