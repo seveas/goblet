@@ -91,8 +91,19 @@ app.add_url_rule('/<path:repo>/snapshot/<path:ref>/<format>/', view_func=v.Snaps
 
 # Logging
 if not app.debug and app.config['ADMINS']:
-    import logging
-    from logging.handlers import SMTPHandler
+    import logging, logging.handlers
+    class SMTPHandler(logging.handlers.SMTPHandler):
+        def format(self, msg):
+            from flask import request
+            msg = super(SMTPHandler, self).format(msg)
+            get = '\n'.join(['%s=%s' % (x, request.args[x]) for x in request.args])
+            post = '\n'.join(['%s=%s' % (x, str(request.form[x])[:1000]) for x in request.form])
+            cookies = '\n'.join(['%s=%s' % (x, request.cookies[x]) for x in request.cookies])
+            env = '\n'.join(['%s=%s' % (x, request.environ[x]) for x in request.environ])
+            hdr = '\n'.join([': '.join(x) for x in request.headers])
+            return ("%s\n\nGET variables:\n%s\n\nPOST variables:\n%s\n\nCookies:\n%s\n\n" +
+                    "HTTP Headers:\n%s\n\nEnvironment:\n%s") % (msg, get, post, cookies, hdr, env)
+
     mail_handler = SMTPHandler('127.0.0.1', app.config['SENDER'], app.config['ADMINS'], "Goblet error")
     mail_handler.setLevel(logging.ERROR)
     app.logger.addHandler(mail_handler)
