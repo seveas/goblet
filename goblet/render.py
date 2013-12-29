@@ -24,7 +24,7 @@ def render(repo, ref, path, entry, plain=False, blame=False):
     if plain:
         if renderer[0] in ('rest', 'markdown'):
             renderer = ('code', pygments.lexers.get_lexer_for_filename(path))
-        elif renderer[1] == 'man':
+        elif renderer[0] == 'man':
             renderer = ('code', pygments.lexers.get_lexer_by_name('groff'))
     if blame:
         if renderer[0] in ('rest', 'markdown'):
