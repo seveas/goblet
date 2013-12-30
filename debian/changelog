@@ -1,0 +1,5 @@
+goblet (0.3.2-1) saucy; urgency=low
+
+  * Initial debian packaging
+
+ -- Dennis Kaarsemaker <dennis@kaarsemaker.net>  Sun, 29 Dec 2013 19:46:48 +0100

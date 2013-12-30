@@ -1,0 +1,19 @@
+Source: goblet
+Maintainer: Dennis Kaarsemaker <dennis@kaarsemaker.net>
+Section: python
+Priority: optional
+Build-Depends: debhelper, python-all,  python-setuptools, python3-all, python3-setuptools
+Standards-Version: 3.9.3
+X-Python-Version: >= 2.4
+X-Python3-Version: >= 3.0
+Homepage: http://seveas.github.io/goblet
+
+Package: python-goblet
+Architecture: all
+Depends: ${misc:Depends}, ${python:Depends}
+Description: Fast and easy to customize Git web interface
+
+Package: python3-goblet
+Architecture: all
+Depends: ${misc:Depends}, ${python3:Depends}
+Description: Fast and easy to customize Git web interface
