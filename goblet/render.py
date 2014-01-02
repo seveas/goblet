@@ -1,5 +1,5 @@
 # Goblet - Web based git repository browser
-# Copyright (C) 2013 Dennis Kaarsemaker
+# Copyright (C) 2012-2014 Dennis Kaarsemaker
 # See the LICENSE file for licensing details
 
 from flask import url_for
@@ -111,6 +111,8 @@ def code(repo, ref, path, entry, lexer, data=None, blame=False):
     html = Markup(pygments.highlight(data, lexer, formatter).decode('utf-8'))
     if blame:
         blame = repo.blame(ref, path)
+        if not blame:
+            return
         blame.append(None)
         def replace(match):
             line = int(match.group(2)) - 1

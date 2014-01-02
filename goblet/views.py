@@ -1,5 +1,5 @@
 # Goblet - Web based git repository browser
-# Copyright (C) 2013 Dennis Kaarsemaker
+# Copyright (C) 2012-2014 Dennis Kaarsemaker
 # See the LICENSE file for licensing details
 
 from flask import render_template, current_app, redirect, url_for, request, send_file
@@ -72,6 +72,8 @@ class RepoBaseView(TemplateView):
             ret = self.handle_request(repo, *args, **kwargs)
         except NotFound, e:
             return str(e), 404
+        if hasattr(ret, 'status_code'):
+            return ret
 
         if self.template_name:
             data.update(ret)
@@ -228,6 +230,9 @@ class BlobView(PathView):
         ref, path, tree, file = self.split_ref(repo, path, expects_file=True)
         folder = '/' in path and path[:path.rfind('/')] or None
         renderer, rendered_file  = render(repo, ref, path, file, blame=request.endpoint == 'blame', plain=request.args.get('plain') == '1')
+        # For empty blames, a redirect to the history is better
+        if rendered_file is None:
+            return redirect(url_for('history', repo=repo.name, path='%s/%s' % (ref, path)))
         return {'tree': tree, 'ref': ref, 'path': path, 'file': file, 'folder': folder, 'rendered_file': rendered_file, 'renderer': renderer}
 
 class RawView(PathView):
