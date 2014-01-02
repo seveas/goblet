@@ -221,9 +221,6 @@ class Repository(pygit2.Repository):
             else:
                 key, val = line.split(None, 1)
                 commits[last_commit][key] = val
-        if not lines:
-            # Empty file, pretend to have a line
-            lines.append(('', orig_line, line_now, commits[last_commit]))
         return lines
 
     def grep(self, commit, path, query):

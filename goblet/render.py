@@ -111,6 +111,8 @@ def code(repo, ref, path, entry, lexer, data=None, blame=False):
     html = Markup(pygments.highlight(data, lexer, formatter).decode('utf-8'))
     if blame:
         blame = repo.blame(ref, path)
+        if not blame:
+            return
         blame.append(None)
         def replace(match):
             line = int(match.group(2)) - 1
