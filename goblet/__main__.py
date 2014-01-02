@@ -109,4 +109,5 @@ if not app.debug and app.config['ADMINS']:
     app.logger.addHandler(mail_handler)
 
 if __name__ == '__main__':
+    os.chdir('/')
     app.run()
