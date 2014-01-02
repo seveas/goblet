@@ -9,16 +9,16 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Installing goblet &mdash; Goblet 0.2 documentation</title>
+    <title>Installing goblet &mdash; Goblet 0.3.2 documentation</title>
     
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.2',
+        VERSION:     '0.3.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,9 +29,10 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
-    <link rel="top" title="Goblet 0.2 documentation" href="index.html" />
+    <link rel="top" title="Goblet 0.3.2 documentation" href="index.html" />
     <link rel="next" title="Configuring goblet" href="configuring.html" />
     <link rel="prev" title="Serving git repositories with goblet" href="index.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
     <div class="relbar-top">
@@ -48,7 +49,7 @@
         <li class="right" >
           <a href="index.html" title="Serving git repositories with goblet"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">Goblet 0.2 documentation</a> &raquo;</li>
+    <li><a href="index.html">Goblet 0.3.2 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -78,18 +79,19 @@ sudo apt-get update</pre>
 </div>
 <div class="section" id="non-python-dependencies">
 <h2>Non-python dependencies<a class="headerlink" href="#non-python-dependencies" title="Permalink to this headline">¶</a></h2>
-<p>The only non-python dependencies are xz and git. Goblet does require a patched
-git though. If you do not use the packages I provide, please build your own git
-with Jeff King&#8217;s blame-tree patches applied. You can find these, rebased
-against the latest git version, as the last four patches on <a class="reference external" href="https://github.com/seveas/git/commits/dk/private">my git clone</a></p>
+<p>The only non-python dependencies are xz, git and groff. Goblet does require a
+patched git though. If you do not use the packages I provide, please build
+your own git with Jeff King&#8217;s blame-tree patches applied. You can find
+these, rebased against the latest git version, as the last four patches on <a class="reference external" href="https://github.com/seveas/git/commits/dk/private">my
+git clone</a></p>
 </div>
 <div class="section" id="python-dependencies">
 <h2>Python dependencies<a class="headerlink" href="#python-dependencies" title="Permalink to this headline">¶</a></h2>
-<p>Goblet requires Python 2.6 or newer, python 3 is not yet supported. It has only
-a few python dependencies: the flask/werkzeug/jinja2/pygments combination as
-web framework, markdown for rendering markdown and whelk for executing git
-commands. These can all be installed with pip, or from my repositories or the
-Ubuntu repositories.</p>
+<p>Goblet requires Python 2.6 or newer, python 3 is not yet supported. It has
+only a few python dependencies: the flask/werkzeug/jinja2/pygments
+combination as web framework, markdown and docutils for rendering markdown and
+rst, and whelk for executing git commands. These can all be installed with
+pip, or from my repositories or the Ubuntu repositories.</p>
 </div>
 <div class="section" id="pygit2">
 <h2>pygit2<a class="headerlink" href="#pygit2" title="Permalink to this headline">¶</a></h2>
@@ -138,6 +140,7 @@ configure goblet.</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <div class="sphinxlocaltoc">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Installing goblet</a><ul>
@@ -149,6 +152,7 @@ configure goblet.</p>
 </li>
 </ul>
 
+  </div>
   <h4>Previous topic</h4>
   <p class="topless"><a href="index.html"
                         title="previous chapter">Serving git repositories with goblet</a></p>
@@ -186,7 +190,7 @@ configure goblet.</p>
         <li class="right" >
           <a href="index.html" title="Serving git repositories with goblet"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">Goblet 0.2 documentation</a> &raquo;</li>
+    <li><a href="index.html">Goblet 0.3.2 documentation</a> &raquo;</li>
  
       </ul>
     </div>

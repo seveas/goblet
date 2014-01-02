@@ -4,7 +4,7 @@
  *
  * stylesheet for "Cloud" theme for Sphinx.
  *
- * :copyright: Copyright 2011 by Assurance Technologies
+ * :copyright: Copyright 2011-2012 by Assurance Technologies
  * :license: BSD
  *
  *****************************************************/
@@ -12,7 +12,7 @@
 @import url("basic.css");
 
 /*****************************************************
- * page layout
+ * page layout - body
  *****************************************************/
 
 body
@@ -22,8 +22,8 @@ body
     background: #1A4162;
     background-attachment: fixed;
     color: #000;
-    font-family: "Noticia Text", serif;
-    font-size: 11pt;
+    font-family: "Open Sans", sans-serif;
+    font-size: 100%;
     line-height: 1em;
 }
 
@@ -36,7 +36,8 @@ div.related
     margin: 0 auto;
     max-width: 11in;
     background: #5682AD;
-    line-height: 30px;
+    line-height: 1.5em;
+    padding: .5em 0;
     color: #ffffff;
 }
 
@@ -57,6 +58,7 @@ div.relbar-bottom div.related
 div.related a
 {
     color: #ffffff;
+    display: inline-block;
 }
 
 /*****************************************************
@@ -120,6 +122,11 @@ div.sphinxsidebar
 div.document.collapsed-sidebar div.sphinxsidebar { display: none; }
 
 
+div.sphinxsidebarwrapper
+{
+   padding: 1em 0 0 10px;
+}
+
 div.sphinxsidebar h3,
 div.sphinxsidebar h4
 {
@@ -128,7 +135,7 @@ div.sphinxsidebar h4
 
     border-bottom: 1px dashed #C0C0C0;
 
-    font-family: ;
+    font-family: "Noticia Text", serif;
     font-weight: normal;
     color: #777777;
 }
@@ -177,7 +184,7 @@ div.sphinxsidebar a:active
     color: #777777;
 }
 
-ul.sphinxtoclist a.current
+div.sphinxlocaltoc a.visible
 {
   display: block;
   background: #FFF8E4;
@@ -217,10 +224,9 @@ div.sidebartoggle button:active
    -moz-box-shadow: none;
 }
 
-
 div.sphinxsidebar p.logo
 {
-    margin: 16px 0 0 0;
+    margin: 1em 0 0 -10px;
     text-align: center;
 }
 
@@ -229,9 +235,9 @@ div.sphinxsidebar .searchtip
     color: #C0C0C0;
 }
 
-/*--------------------------------------------------
- * collapsible sidebar buttons
- *--------------------------------------------------*/
+/*****************************************************
+ * page layout - collapsible sidebar buttons
+ *****************************************************/
 
 
 div.sidebartoggle
@@ -278,6 +284,7 @@ div.document.collapsed-sidebar div.sidebartoggle button
 }
 
 
+
 /*****************************************************
  * page layout - footer
  *****************************************************/
@@ -321,137 +328,7 @@ div.footer + script + div.footer
 }
 
 /*****************************************************
- * adaptive page layout - if too small, hide some things
- *****************************************************/
-
-@media only screen and (max-width: 960px),
-       only screen and (max-width: 700px),
-       only screen and (max-device-width: 700px),
-       handheld
-{
-    body {
-        margin: 0;
-    }
-
-    div.relbar-top div.related,
-    div.relbar-bottom div.related
-    {
-        border-radius: 0;
-        -moz-border-radius: 0;
-        -webkit-border-radius: 0;
-    }
-
-    /* hide extra info */
-    div.admonition.floater { display: none; }
-}
-
-@media only screen and (max-width: 700px),
-       only screen and (max-device-width: 700px),
-       handheld
-{
-    /* hide the sidebar */
-    div.sphinxsidebar
-    {
-        display: none;
-    }
-
-    
-     /* FIXME: would like to make this work some how, hiding it til it works */
-      div.sidebartoggle { display: none; }
-    
-
-    div.bodywrapper
-    {
-        margin-left: 0;
-    }
-
-    /* hide all lefthand links but first one, to save space*/
-    div.related > ul > li:not(.right) + li
-    {
-        display: none;
-    }
-
-    /* remove spacing on headers and reduce body padding */
-    body div.body h2, body div.body p.rubric
-    {
-        border-radius: 0;
-        -moz-border-radius: 0;
-        -webkit-border-radius: 0;
-    }
-
-    div.body
-    {
-        padding: 0 10px 30px;
-    }
-}
-
-/*****************************************************
- * adapt for print media
- *****************************************************/
-@media print
-{
-   div.body { border: 0; }
-}
-
-/*****************************************************
- * document - link styles
- *****************************************************/
-
-a
-{
-    color: #003469;
-    text-decoration: none;
-}
-
-a:visited
-{
-    color: ;
-    text-decoration: none;
-}
-
-a:hover
-{
-    text-decoration: underline;
-}
-
-a.biglink
-{
-    font-size: 130%;
-}
-
-
-a.external:before
-{
-    content: "\21D7";
-    padding-right: .1em;
-}
-a.external.issue:before
-{
-    content: "\2727";
-}
-em.issue:before
-{
-    content: "\2727";
-    padding-right: .1em;
-}
-
-
-dt:target,
-.footnote:target,
-.highlighted
-{
-    padding: 4px;
-    margin: -4px;
-
-    background-color: #fbe54e;
-
-    border-radius: 4px;
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-}
-
-/*****************************************************
- * document - header styles
+ * document - section headers
  *****************************************************/
 
 div.body h1,
@@ -468,7 +345,7 @@ div.body h6
     color: #000000;
     text-shadow: 1px 1px 1px rgba(0,0,0,.1);
 
-    font-family: ;
+    font-family: "Noticia Text", serif;
     font-weight: normal;
     line-height: 1em;
 }
@@ -477,21 +354,23 @@ div.body h1 {
     margin: 0 0 .5em 0;
     padding: .9em 0 0 0;
     text-align: center;
-    font-size: 24pt;
+    font-size: 200%;
 }
 
-div.body h2, div.body p.rubric { font-size: 18pt; }
-div.body h3 { font-size: 16pt; }
-div.body h4 { font-size: 14pt; }
-div.body h5 { font-size: 12pt; }
-div.body h6 { font-size: 11pt; }
+div.body h2, div.body p.rubric { font-size: 160%; }
+div.body h3 { font-size: 140%; }
+div.body h4 { font-size: 120%; }
+div.body h5 { font-size: 110%; }
+div.body h6 { font-size: 100%; }
 
 div.body h2,
 div.body p.rubric,
-div.section.emphasized > h3
+div.section.emphasized > h3, /* deprecated in favor of below: */
+div.section.emphasize-children > div.section > h3
 {
     margin: 1em -10px 0;
     padding: 12px 10px 10px;
+    clear: both; /* for floating admonitions */
 
     background: #84A6C7;
     border: 1px solid rgba(0,0,0,.125);
@@ -507,18 +386,25 @@ div.section.emphasized > h3
 }
 
 div.body h2.highlighted,
-div.section.emphasized > h3.highlighted
+div.section.emphasized > h3.highlighted, /* deprecated in favor of below: */
+div.section.emphasize-children > div.section > h3.highlighted
 {
     border: 0.25em solid #fbe54e;
 }
 
 div.body p.rubric,
-div.section.emphasized > h3
+div.section.emphasized > h3, /* deprecated in favor of below: */
+div.section.emphasize-children > div.section > h3
 {
-     background: #92BCDE;
+    background: #92BCDE;
 }
 
-div.section.emphasized > h3 { margin-left: 0; margin-right: 0; }
+div.section.emphasized > h3, /* deprecated in favor of below: */
+div.section.emphasize-children > div.section > h3
+{
+    margin-left: 0;
+    margin-right: 0;
+}
 
 a.headerlink
 {
@@ -541,7 +427,7 @@ a.headerlink:hover
 }
 
 /*****************************************************
- * document - toggleable h1/h2 sections
+ * document - toggleable sections
  *****************************************************/
 
 .html-toggle-button
@@ -558,7 +444,7 @@ a.headerlink:hover
     -webkit-box-shadow: 2px 2px 2px #003469;
 }
 
-div.body div.section:not(.emphasized) > h3.html-toggle-button:hover,
+div.body div.section:not(.emphasize-children) > div.section:not(.emphasized) > h3.html-toggle-button:hover,
 div.body h4.html-toggle-button:hover
 {
     background: #92BCDE;
@@ -599,90 +485,8 @@ div.body h4.html-toggle-button:hover
 .html-toggle-button:hover a.headerlink:not(:hover) { opacity: 0; }
 
 /*****************************************************
- * document - admonitions
+ * document - misc styles
  *****************************************************/
-
-div.admonition, p.deprecated
-{
-    background: #f2f2f2;
-    border: 1px solid rgba(0,0,0,.05);
-    border-width: 0 1px 1px 0;
-    margin: 1em 0;
-    padding: .5em;
-    border-radius: 0 10px 0 10px;
-    -webkit-border-radius: 0 10px 0 10px;
-    -moz-border-radius: 0 10px 0 10px;
-}
-
-div.note, div.seealso, div.warning, div.admonition-todo, p.deprecated
-{
-    background-position: 8px 8px;
-    background-repeat: no-repeat;
-    padding-left: 38px;
-}
-
-div.note { background-color: #E7F0FE; background-image: url(icon-note.png); }
-div.seealso { background-color: #FFF7E0; background-image: url(icon-seealso.png); }
-div.topic { background-color: #eee; }
-div.warning { background-color: #ffe4e4; background-image: url(icon-warning.png); }
-div.admonition-todo { background-color: #FFF7E0; background-image: url(icon-todo.png); }
-p.deprecated { background-color: #fbece0; background-image: url(icon-deprecated.png); }
-
-div.admonition.caution { background-color: green; }
-
-div.admonition p,
-div.admonition pre,
-div.admonition ul,
-div.admonition ol
-{
-    margin-bottom: 5px;
-}
-
-div.admonition.floater
-{
-    float: right;
-    max-width: 40%;
-    margin: 1em 0 1.5em 1.5em;
-}
-
-/* next 3 rules merge the title into the first paragraph */
-p.admonition-title
-{
-    display: inline;
-    margin-right: 0;
-}
-
-p.admonition-title + p
-{
-    display: inline;
-}
-
-p.admonition-title:after
-{
-    content: ":";
-}
-
-p.admonition-title + ul
-{
-  margin-top: 0;
-}
-
-/* don't indent admonitions inside definitions */
-dl div.admonition
-{
-  margin-left: 0;
-}
-
-/*****************************************************
- * document - misc body styles
- *****************************************************/
-
-div.body hr {
-    margin: 0 10px;
-    background: none;
-    border: 1px dashed #C0C0C0;
-    border-width: 1px 0 0 0;
-}
 
 div.body p,
 div.body dd,
@@ -690,6 +494,13 @@ div.body li
 {
     text-align: justify;
     line-height: 133%;
+}
+
+div.body hr {
+    margin: 0 10px;
+    background: none;
+    border: 1px dashed #C0C0C0;
+    border-width: 1px 0 0 0;
 }
 
     /*------------------------------------
@@ -703,42 +514,291 @@ a.footnote-reference
     top: -.75em;
 }
 
-table.docutils.footnote {  margin: 1em 0 0 1em; }
+table.docutils.footnote { margin: 1em 0 0 1em; }
 
     /*------------------------------------
-     * list & definition lists
+     * lists (UL, OL, DL)
      *------------------------------------*/
 
 dl { margin-bottom: 1.5em; }
 li > dl:only-child { margin-bottom: 0; }
 
+dd ol { margin-bottom: 10px; }
+
+dl.docutils > dt { font-size: 1.1em; margin-bottom: .5em; }
+dl.docutils > dd + dt { margin-top: 1.5em; }
+
 /* join separate ULs together */
 ul + ul,
 ul + div > ul:only-child,
-div.toctree-wrapper + ul
+div.toctree-wrapper + ul { margin-top: -1em; }
+
+/*****************************************************
+ * document - links
+ *****************************************************/
+
+a
 {
- margin-top: -1em;
+    color: #003469;
+    text-decoration: none;
 }
 
-dd ol {  margin-bottom: 10px; }
+a:visited
+{
+    color: ;
+    text-decoration: none;
+}
+
+a:hover
+{
+    text-decoration: underline;
+}
+
+a.biglink
+{
+    font-size: 130%;
+}
+
+
+a.external:before
+{
+    content: "\21D7";
+    padding-right: .1em;
+}
+
+a.external.issue:before
+{
+    content: "\21D7";
+}
+
+a.external[href^="mailto:"]:before
+{
+    content: "";
+}
+
+em.issue:before
+{
+    content: "\21D7";
+    padding-right: .1em;
+}
+
+
+dt:target,
+.footnote:target,
+.highlighted
+{
+    padding: 4px;
+    margin: -4px;
+
+    background-color: #fbe54e;
+
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+}
+
+/*****************************************************
+ * document - table styles
+ *****************************************************/
+
+    /*------------------------------------
+     * custom table classes
+     *------------------------------------*/
+
+table.fullwidth { width: 100%; }
+
+table.centered { margin-left: auto; margin-right: auto; }
+
+table.docutils.plain { border: none; }
+table.docutils.plain tr.row-odd > * { background: none; }
+
+/* legacy alias for table.plain */
+table.docutils.html-plain-table tr.row-odd > * { background: none; }
+
+    /*------------------------------------
+     * default table styling
+     *------------------------------------*/
+
+table.docutils th {
+    border: 0 solid transparent;
+    padding: .4em;
+    font-family: "Noticia Text", serif;
+    background: rgba(0,0,0,.15);
+}
+
+table.docutils th.head:not(.stub) {
+    border-bottom: 1px solid rgba(0,0,0,.15);
+}
+
+table.docutils th.stub + td
+{
+    border-left: 1px solid rgba(0,0,0,.15);
+}
+
+table.docutils td {
+    padding: .4em;
+    border: 0 solid rgba(0,0,0,.15);
+}
+table.docutils tr.row-odd td { background: rgba(0,0,0,.06); }
+
+h2 + table.docutils { margin-top: 1em; }
+table > caption { margin: 1em 0 .5em; font-style: italic; }
+
+    /*------------------------------------
+     * td/th classes added by .ext.table_styling
+     *------------------------------------*/
+table.docutils .left-align { text-align: left; }
+table.docutils .center-align { text-align: center; }
+table.docutils .right-align { text-align: right; }
+table.docutils .justify-align { text-align: justify; }
+table.docutils .nowrap { white-space: nowrap; }
+
+table.docutils .single-left-divider { border-left-width: 2px; }
+table.docutils th + .single-left-divider,
+table.docutils th + .double-left-divider { border-left-width: 0; }
+table.docutils .double-left-divider { border-left-width: 6px; border-left-style: double; }
+table.docutils .single-right-divider:last-child { border-right-width: 2px; }
+table.docutils .double-right-divider:last-child { border-right-width: 6px; border-right-style: double; }
+
+/*****************************************************
+ * document - field-list tables & contents
+ *****************************************************/
+table.docutils th.field-name { background: none; }
 
 .field-list p { margin-bottom: 16px; }
 
-    /*------------------------------------
-     * table styles
-     *------------------------------------*/
+td.field-body > p.first,
+td.field-body > ul.first.simple > li { margin-bottom: 1em; }
 
-h2 + table.docutils { margin-top: 1em; }
+td.field-body > em,
+td.field-body > ul.first.simple > li > em { padding: 2px 4px; }
 
-table.docutils th { border: 0; padding: 5px 10px 5px 5px; }
-table.docutils td { border: 0; padding: 5px; }
-table.docutils tr.row-odd th { background: rgba(0,0,0,.1); }
-table.docutils tr.row-odd td { background: rgba(0,0,0,.05); }
+td.field-body > p.first:empty { display: none; }
+td.field-body > p:last-child:empty { margin-bottom: 1em; }
 
-table.docutils.html-plain-table tr.row-odd > * { background: none; }
+/* workaround for chrome bug */
+td.field-body > p.first:only-child { margin: 0; }
 
 /*****************************************************
- * document - quoted text
+ * document - admonitions
+ *****************************************************/
+
+    /*------------------------------------
+     * basic admonition styling - adds colored bg & icons
+     *------------------------------------*/
+
+div.admonition, p.deprecated
+{
+    background: #E7F0FE;
+    border: 1px solid rgba(0,0,0,.05);
+    border-width: 0 1px 1px 0;
+    margin: 1em 0;
+    padding: .5em;
+    border-radius: 0 .7em 0 .7em;
+    -webkit-border-radius: 0 .7em 0 .7em;
+    -moz-border-radius: 0 .7em 0 .7em;
+}
+
+div.note, div.seealso, div.warning, div.admonition-todo, p.deprecated, div.caution
+{
+    background-position: .6em .5em;
+    background-size: auto 1.58em;
+    background-repeat: no-repeat;
+    padding-left: 2.65em;
+}
+
+
+
+
+div.note {
+    background-color: #E7F0FE;
+    background-image: url("icon-note.png");
+}
+
+
+div.seealso {
+    background-color: #FFF7E0;
+    background-image: url("icon-seealso.png");
+}
+
+
+div.warning {
+    background-color: #ffe4e4;
+    background-image: url("icon-warning.png");
+}
+
+
+div.caution {
+    background-color: #FFF7E0;
+    background-image: url("icon-warning.png");
+}
+
+
+div.admonition-todo {
+    background-color: #FFF7E0;
+    background-image: url("icon-todo.png");
+}
+
+
+p.deprecated {
+    background-color: #fbece0;
+    background-image: url("icon-deprecated.png");
+}
+
+
+    /*------------------------------------
+     * misc adjustments to admonitions
+     *------------------------------------*/
+
+div.admonition p,
+div.admonition pre,
+div.admonition ul,
+div.admonition ol { margin-bottom: 5px; }
+
+/* allow notes to float on right side w/in document */
+div.admonition.floater
+{
+    float: right;
+    max-width: 40%;
+    margin: 1em 0 1.5em 1.5em;
+}
+
+/* next few rules merge the title into the first paragraph */
+p.admonition-title { display: inline; margin-right: 0; }
+p.admonition-title + p { display: inline; }
+p.admonition-title:after { content: ":"; }
+p.admonition-title + ul { margin-top: 0; }
+
+/* don't indent admonitions inside definitions */
+dl div.admonition { margin-left: 0; }
+
+    /*------------------------------------
+     * todo summary list
+     *------------------------------------*/
+
+div#todos p.admonition-title
+{
+    font-weight: normal;
+    color: #AAA;
+    font-size: 70%;
+}
+
+div#todos div.admonition-todo + p
+{
+    font-size: 70%;
+    text-align: right;
+    margin-top: -.5em;
+    margin-bottom: 1.5em;
+    color: #AAA;
+}
+
+div#todos div.admonition-todo + p a
+{
+    font-size: 130%;
+}
+
+/*****************************************************
+ * document - quoted text (TT & PRE)
  *****************************************************/
 
 div.highlight
@@ -759,10 +819,18 @@ div.highlight-python pre
     -webkit-border-radius: 8px;
 
     font-family: "Droid Sans Mono", monospace;
-    font-size: 9pt;
+    font-size: 85%;
     line-height: 133%;
 
     color: #111111;
+}
+
+/* for source-view pages */
+div.body > h1 + div.highlight:last-child > pre
+{
+    padding-top: 5em;
+    margin-top: -5em;
+    margin-bottom: -10px;
 }
 
 table.highlighttable td { padding: 0; }
@@ -794,8 +862,6 @@ tt.literal
     -moz-border-radius: 4px;
     -webkit-border-radius: 4px;
 }
-
-tt.descname { font-size: 100%; }
 
 p tt.literal { white-space: nowrap; }
 
@@ -831,14 +897,9 @@ tt.literal.xref
     margin: 0;
 }
 
-th
-{
-    background-color: #ede;
-}
-
 .viewcode-back
 {
-    font-family: "Noticia Text", serif;
+    font-family: "Open Sans", sans-serif;
 }
 
 div.viewcode-block:target
@@ -849,15 +910,15 @@ div.viewcode-block:target
 }
 
 /*****************************************************
- * nested sections -
- * (requires css classes set by astdoc.ext.nested_sections extension)
+ * document - nested sections
+ * requires css classes set by .ext.autodoc_sections
  *****************************************************/
 
 dl.nested-section > dt
 {
     color: #000000;
 
-    font-family: ;
+    font-family: "Noticia Text", serif;
     font-weight: normal;
     font-size: 100%;
 }
@@ -873,25 +934,24 @@ dl.nested-section > dd
 }
 
 /*****************************************************
- * index page - category colorization
- * (requires css classes set by astdoc.ext.index_styles extension)
+ * index page styling
+ * requires classes set by .ext.index_styling
  *****************************************************/
 
 table.indextable span.category
 {
     font-size: 80%;
+    font-style: italic;
     color: #84ADBE;
 }
 
-table.indextable span.category.function,
-table.indextable span.category.classmethod,
-table.indextable span.category.method
-{ color: #9AB9CE; }
+table.indextable a,
+table.indextable a:hover span.category
+{
+    color: #003469;
+}
 
-table.indextable span.category.attribute { color: #8BC38B; }
-table.indextable span.category.class { color: #9996c2; }
-
-table.indextable span.location
+table.indextable span.category span.location
 {
     font-weight: bold;
 }
@@ -907,73 +967,134 @@ table.indextable td > dl > dd > dl
     margin-bottom: .5em;
 }
 
-/*#################################################################
-    unorganized bits
-  #################################################################*/
-
-
 /*****************************************************
- * provide styling for TODO
+ * adapt for various page sizes & media
  *****************************************************/
 
-div#todos p.admonition-title
+/*------------------------------------
+ * adapt for larger displays
+ *------------------------------------*/
+@media only screen and (min-device-width: 16in)
 {
-    font-weight: normal;
-    color: #AAA;
-    font-size: 70%;
+    body { font-size: 87.5%; }
 }
 
-div#todos div.admonition-todo + p
+/*------------------------------------
+ * adapt for 'compact' and 'minimal' page sizes
+ *------------------------------------*/
+
+@media only screen and (max-width: 960px),
+       only screen and (max-width: 700px),
+       only screen and (max-device-width: 700px),
+       handheld
 {
-    font-size: 70%;
-    text-align: right;
-    margin-top: -.5em;
-    margin-bottom: 1.5em;
-    color: #AAA;
+    body { margin: 0; }
+
+    div.relbar-top div.related,
+    div.relbar-bottom div.related
+    {
+        border-radius: 0;
+        -moz-border-radius: 0;
+        -webkit-border-radius: 0;
+    }
+
+    /* hide extra info */
+    div.admonition.floater { display: none; }
 }
 
-div#todos div.admonition-todo + p a
+/*------------------------------------
+ * adapt for 'minimal' page size
+ *------------------------------------*/
+@media only screen and (max-width: 700px),
+       only screen and (max-device-width: 700px),
+       handheld
 {
-    font-size: 130%;
+    body { font-size: 87.5%; }
+
+    /* hide the sidebar */
+    div.sphinxsidebar
+    {
+        display: none;
+    }
+
+    
+     /* FIXME: would like to make this work some how, hiding it til it works */
+      div.sidebartoggle { display: none; }
+    
+
+    div.bodywrapper
+    {
+        margin-left: 0;
+    }
+
+    /* tweak relbar - emphasize title, hide crumbs */
+    div.related > ul > li.right + li:not(.right) { font-weight: bold; }
+    div.related > ul > li:not(.right) + li { display: none; }
+
+    /* remove spacing on headers and reduce body padding */
+    body div.body h2,
+    body div.body p.rubric,
+    body div.section.emphasized > h3, /* deprecated in favor of below: */
+    body div.section.emphasize-children > div.section > h3
+    {
+        padding-top: 0.25em;
+        padding-bottom: .25em;
+        border-radius: 0;
+        -moz-border-radius: 0;
+        -webkit-border-radius: 0;
+    }
+
+    div.body
+    {
+        padding: 0 10px 30px;
+    }
+
+    /* shrink the headers */
+    div.body h1 { font-size: 160%; }
+    div.body h2, div.body p.rubric { font-size: 140%; }
+    div.body h3 { font-size: 120%; }
+    div.body h4 { font-size: 110%; }
+    div.body h5 { font-size: 100%; }
 }
 
-/*****************************************************
- * add more whitespace to parameter lists
- *****************************************************/
-td.field-body > ul.first.simple > li,
-td.field-body > p.first
+/*------------------------------------
+ * adapt for print media
+ *------------------------------------*/
+
+@media print
 {
-    margin-bottom: 1em;
-}
+    div.sidebartoggle { display: none; }
+    div.body { border: 0; }
 
-td.field-body > p.first:only-child
-{
-    margin: 0; /* work around Chrome bug */
-}
+    /* omit "hide section" label */
+    .html-toggle.expanded > .html-toggle-button:after
+    {
+        display: none;
+    }
 
+    /* indicate collapsed sections were omitted
+       TODO: would like to auto-expand them instead, but not sure how to
+       create a reliable CSS rule given the way the JS code currently works.
+     */
+    .html-toggle.collapsed > .html-toggle-button:after
+    {
+        content: "[not printed]" !important;
+    }
 
-td.field-body > ul.first.simple > li > em,
-td.field-body > em
-{
-   padding: 2px 4px;
-}
-
-/*****************************************************
- * misc tweaks to parameter lists
- *****************************************************/
-
-th {
-    background: inherit;
-}
-
-td.field-body > p.first:empty
-{
-    display: none;
-}
-
-td.field-body > p:last-child:empty
-{
-    margin-bottom: 1em;
+    /* remove styling from headers */
+    div.body h1,
+    div.body h2,
+    div.body p.rubric,
+    div.body h3,
+    div.body h4,
+    div.body h5,
+    div.body h6
+    {
+        color: #000000 !important;
+        text-shadow: none !important;
+        border: none !important;
+        padding: 0;
+    }
 }
 
 /*****************************************************

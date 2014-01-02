@@ -6,7 +6,7 @@
  * parts of the cloud theme. Handles things such as toggleable sections,
  * collapsing the sidebar, etc.
  *
- * :copyright: Copyright 2011 by Assurance Technologies
+ * :copyright: Copyright 2011-2012 by Assurance Technologies
  * :license: BSD
  */
 
@@ -73,7 +73,7 @@ $(document).ready(function (){
     function contains_hash(){
       var hash = document.location.hash;
       return hash && (section[0].id == hash.substr(1) ||
-              section.find(hash.replace(".","\\.")).length>0);
+              section.find(hash.replace(/\./g,"\\.")).length>0);
     }
 
     // helper to control toggle state
@@ -150,69 +150,6 @@ $(document).ready(function (){
     hide_btn.hide();
   }
 });
-/* ==========================================================================
- * sidebar toc highlighter
- * ==========================================================================
- *
- * highlights toc entry for current section being viewed.
- * only enabled under stick mode
- */
-$(document).ready(function (){
-  // pre-lookup all the links, hack in a class for css styling.
-  var links = $("div.sphinxsidebar p.logo + h3 + ul")
-              .addClass("sphinxtoclist")
-              .find("a");
-  var h1_section = $("h1").parent();
-
-  // function to update toc markers
-  function update_current(){
-    // determine viewable range
-    var start = $(window).scrollTop();
-    var stop = start + $(window).height();
-
-    // clear flags from last pass
-    links.removeClass("toggled").removeClass("current");
-    var link_count = links.length;
-
-    // set 'current' class for all currently viewable sections in toc
-    for(var i=0; i < link_count; ++i){
-      var elem = $(links[i]); // XXX: could cache this in another list
-
-      // hack to skip elements hidden w/in a toggled section
-      if(elem.hasClass("toggled")) continue;
-
-      // lookup section referenced by link
-      var tag = elem.attr("href");
-      var section = (tag == "#") ? h1_section : $(tag);
-
-      // hack to flag subsections w/in a toggled section
-      var toggle_children = null;
-      if(section.is(".html-toggle.collapsed")){
-        toggle_children = elem.parent().find("ul a").addClass("toggled");
-      }
-
-      // if section is off-screen, don't mark it
-      var top = section.offset().top;
-      if(top > stop || top + section.height() < start) continue;
-
-      // if section has children, only count it if prologue is visible.
-      var child = section.find("div.section"); // FIXME: only need first match
-      if(child.length && child.offset().top < start) continue;
-
-      // mark it!
-      elem.addClass("current");
-//      if(toggle_children) toggle_children.addClass("current");
-    }
-  }
-
-  // run function now, and every time window is resized
-  update_current();
-  $(window).scroll(update_current)
-           .resize(update_current)
-           .bind('cloud-section-toggled', update_current)
-           .bind('cloud-sidebar-toggled', update_current);
-});
-
 
 /* ==========================================================================
  * header breaker
@@ -228,10 +165,10 @@ $(document).ready(function (){
   var orig = header[0].innerHTML;
   var shorter = orig;
   if($("h1 > a:first > tt > span.pre").length > 0){
-      shorter = orig.replace(/(<\/tt><\/a>\s*[-:]\s+)/im, "$1<br> ");
+      shorter = orig.replace(/(<\/tt><\/a>\s*[-\u2013\u2014:]\s+)/im, "$1<br> ");
   }
   else if($("h1 > tt.literal:first").length > 0){
-      shorter = orig.replace(/(<\/tt>\s*[-:]\s+)/im, "$1<br> ");
+      shorter = orig.replace(/(<\/tt>\s*[-\u2013\u2014:]\s+)/im, "$1<br> ");
   }
   if(shorter == orig){
     return;

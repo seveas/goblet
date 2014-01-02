@@ -9,16 +9,16 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Configuring goblet &mdash; Goblet 0.2 documentation</title>
+    <title>Configuring goblet &mdash; Goblet 0.3.2 documentation</title>
     
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.2',
+        VERSION:     '0.3.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,8 +29,9 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
-    <link rel="top" title="Goblet 0.2 documentation" href="index.html" />
+    <link rel="top" title="Goblet 0.3.2 documentation" href="index.html" />
     <link rel="prev" title="Installing goblet" href="install.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
     <div class="relbar-top">
@@ -44,7 +45,7 @@
         <li class="right" >
           <a href="install.html" title="Installing goblet"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">Goblet 0.2 documentation</a> &raquo;</li>
+    <li><a href="index.html">Goblet 0.3.2 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -82,14 +83,13 @@ your own configuration.</p>
 webserver that speaks the wsgi protocol. A document example config is shipped
 with goblet. You will need to modify it to your reality (filesystem paths) and
 then you can run it. Do <em>not</em> run uwsgi as root, but create a special user
-account to run uwsgi.</p>
+account to run uwsgi or use the same user as for your webserer (www-data on
+Debian/Ubuntu) and configure uwsgi to switch to that user.</p>
 <p>Once configured, it can be started with:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">uwsgi</span> <span class="o">--</span><span class="n">ini</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">uwsgi</span><span class="o">.</span><span class="n">ini</span>
-</pre></div>
+<div class="highlight-python"><pre>sudo uwsgi --ini /path/to/uwsgi.ini</pre>
 </div>
 <p>And killed again with:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">uwsgi</span> <span class="o">--</span><span class="n">stop</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">uwsgi</span><span class="o">.</span><span class="n">pid</span>
-</pre></div>
+<div class="highlight-python"><pre>sudo uwsgi --stop /run/uwsgi.pid</pre>
 </div>
 </div>
 <div class="section" id="webserver-configuration">
@@ -99,6 +99,15 @@ same as the one I use, except for some filesystem paths and the hostname. The
 configuration integrates goblet, git&#8217;s http-backend for serving the actual
 repositories, and lets you serve files in your repository root as well. If you
 make goblet work using another httpd, please share your configuration.</p>
+</div>
+<div class="section" id="fcgiwrap">
+<h2>fcgiwrap<a class="headerlink" href="#fcgiwrap" title="Permalink to this headline">¶</a></h2>
+<p>To make nginx execute the git smart http backend, you will also need to install
+and run fcgiwrap. Make sure you edit its initscript and add a line that says:</p>
+<div class="highlight-python"><pre>export HOME=/nonexistent</pre>
+</div>
+<p>If you do not do this, git will try to read <tt class="file docutils literal"><span class="pre">/root/.gitconfig</span></tt>, which it
+cannot do.</p>
 </div>
 <div class="section" id="repository-configuration">
 <h2>Repository configuration<a class="headerlink" href="#repository-configuration" title="Permalink to this headline">¶</a></h2>
@@ -123,17 +132,20 @@ _git, and _http)</li>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <div class="sphinxlocaltoc">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Configuring goblet</a><ul>
 <li><a class="reference internal" href="#goblet-configuration">Goblet configuration</a></li>
 <li><a class="reference internal" href="#uwsgi-configuration">uwsgi configuration</a></li>
 <li><a class="reference internal" href="#webserver-configuration">Webserver configuration</a></li>
+<li><a class="reference internal" href="#fcgiwrap">fcgiwrap</a></li>
 <li><a class="reference internal" href="#repository-configuration">Repository configuration</a></li>
 </ul>
 </li>
 </ul>
 
+  </div>
   <h4>Previous topic</h4>
   <p class="topless"><a href="install.html"
                         title="previous chapter">Installing goblet</a></p>
@@ -165,7 +177,7 @@ _git, and _http)</li>
         <li class="right" >
           <a href="install.html" title="Installing goblet"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">Goblet 0.2 documentation</a> &raquo;</li>
+    <li><a href="index.html">Goblet 0.3.2 documentation</a> &raquo;</li>
  
       </ul>
     </div>
