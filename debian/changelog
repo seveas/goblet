@@ -1,3 +1,9 @@
+goblet (0.3.3-1) saucy; urgency=low
+
+  * New upstream version
+
+ -- Dennis Kaarsemaker <dennis@kaarsemaker.net>  Thu, 02 Jan 2014 17:33:36 +0100
+
 goblet (0.3.2-1) saucy; urgency=low
 
   * Initial debian packaging
