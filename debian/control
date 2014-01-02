@@ -10,10 +10,12 @@ Homepage: http://seveas.github.io/goblet
 
 Package: python-goblet
 Architecture: all
-Depends: ${misc:Depends}, ${python:Depends}
+Depends: ${misc:Depends}, ${python:Depends}, git, python-flask, python-jinja2, python-markdown,
+    python-docutils, python-pygments, python-whelk, python-pygit2, python-chardet
 Description: Fast and easy to customize Git web interface
 
 Package: python3-goblet
 Architecture: all
-Depends: ${misc:Depends}, ${python3:Depends}
+Depends: ${misc:Depends}, ${python3:Depends}, git, python3-flask, python3-jinja2, python3-markdown,
+    python3-docutils, python3-pygments, python3-whelk, python3-pygit2, python3-chardet
 Description: Fast and easy to customize Git web interface

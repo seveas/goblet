@@ -1,3 +1,9 @@
+goblet (0.3.4-1) saucy; urgency=low
+
+  * New upstream version
+
+ -- Dennis Kaarsemaker <dennis@kaarsemaker.net>  Thu, 02 Jan 2014 23:29:48 +0100
+
 goblet (0.3.3-1) saucy; urgency=low
 
   * New upstream version
