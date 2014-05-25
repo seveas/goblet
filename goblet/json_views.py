@@ -33,9 +33,13 @@ class TreeChangedView(PathView):
             for file in lastchanged:
                 lastchanged[file] = (lastchanged[file], tree[file].hex[:7])
             ret = {'files': lastchanged, 'commits': commits}
-            with open(cfile, 'w') as fd:
-                json.dump(ret, fd)
-        if 'wsgi.version' in request.environ and request.environ['SERVER_PORT'] != '5000':
+            if not current_app.config['TESTING']:
+                with open(cfile, 'w') as fd:
+                    json.dump(ret, fd)
+        if current_app.config['TESTING']:
+            # When testing, we're not writing to the file, so we can't send_file or redirect
+            return json.dumps(ret)
+        elif 'wsgi.version' in request.environ and request.environ['SERVER_PORT'] != '5000':
             # Redirect to the file, let the webserver deal with it
             return redirect(cfile.replace(current_app.config['REPO_ROOT'], ''))
         else:
