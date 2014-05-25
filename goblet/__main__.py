@@ -15,6 +15,7 @@ import goblet.filters
 import goblet.views as v
 import goblet.json_views as j
 from goblet.encoding import decode
+import stat
 
 class Defaults:
     REPO_ROOT      = git_checkout and os.path.dirname(git_checkout) or os.getcwd()
@@ -71,6 +72,7 @@ def inject_functions():
         'history_link': v.history_link,
         'file_icon':    v.file_icon,
         'decode':       decode,
+        'S_ISGITLNK':   stat.S_ISGITLNK,
     }
 
 # URL structure

@@ -206,7 +206,7 @@ See the LICENSE file for licensing details
 .goblet .commitdata  {
     padding-top: 1em;
 }
-.goblet .commitdata span {
+.goblet .commitdata span, .goblet .name .submodule {
     color: rgb(154, 153, 148);
     font-size: 90%;
 }

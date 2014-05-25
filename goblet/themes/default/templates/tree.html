@@ -24,7 +24,11 @@ See the LICENSE file for licensing details
   <tr>
     <td><img src="{{ file_icon(file) }}" /></td>
     {% with link = tree_link(repo, ref, path, file) %}
-    <td class="name">{% if link %}<a href="{{ link }}">{% endif %}{{ decode(file.name) }}{% if link %}</a>{% endif %}</td>
+    <td class="name">
+        {% if link %}<a href="{{ link }}">{% endif %}
+        {{ decode(file.name) }}{% if S_ISGITLNK(file.filemode) %}<span class="submodule">@{{ file.hex[:7] }}</span>{% endif %}
+        {% if link %}</a>{% endif %}
+    </td>
     {% endwith %}
     <td class="age" id="age_{{ file.hex[:7] }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
     <td id="msg_{{ file.hex[:7] }}">
