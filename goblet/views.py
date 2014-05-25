@@ -214,7 +214,8 @@ class RepoView(TreeView):
     def handle_request(self, repo):
         tree = repo[repo.head.target].tree
         if 'q' in request.args:
-            return self.git_grep(repo, repo.head, '')
+            ref = repo.ref_for_commit(repo.head.target.hex)
+            return redirect(url_for('tree', repo=repo.name, path=ref) + '?q=' + request.args['q'])
         readme = renderer = rendered_file = None
         for file in tree:
             if re.match(r'^readme(?:.(?:txt|rst|md))?$', file.name, flags=re.I):

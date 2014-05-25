@@ -17,7 +17,7 @@ If you want to see goblet in action, you can find a running instance on
 `kaarsemaker.net`_. If you like what you see, proceed to :doc:`install` and
 enjoy!
 
-Should you hit a problem installing or using github, please report it on
+Should you hit a problem installing or using goblet, please report it on
 `github`_. Reports about uncaught python exceptions should include full
 backtraces. If the repository triggering the bug/issue is public, please
 include a link to the repository and the link to the bug so I can reproduce it.
