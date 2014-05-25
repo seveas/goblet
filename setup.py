@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name = "goblet",
-      version = "0.3.4",
+      version = "0.3.5",
       author = "Dennis Kaarsemaker",
       author_email = "dennis@kaarsemaker.net",
       url = "http://seveas.github.com/goblet",
