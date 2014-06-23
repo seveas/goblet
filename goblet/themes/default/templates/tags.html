@@ -12,7 +12,7 @@ See the LICENSE file for licensing details
 <div class="commit">
 <div class="commitmsg">
 {% if tag.tagger %}
-<img class="gravatar" src="{{ tag.tagger.email|gravatar(36) }}" />
+<img class="gravatar s_36" src="{{ tag.tagger.email|gravatar(36) }}" />
 {% endif %}
     <b>{{ name }}</b>{% if tag %} - {{ tag.message|shortmsg }}{% endif %}<br />
     Download as <a rel="nofollow" href="{{ url_for('snapshot', repo=repo.name, ref=name, format='xz') }}">tar.xz</a> or

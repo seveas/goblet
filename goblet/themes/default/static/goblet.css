@@ -170,6 +170,16 @@ See the LICENSE file for licensing details
     background-repeat: no-repeat;
 }
 
+.goblet .s_20 {
+    width: 20px;
+    height: 20px;
+}
+
+.goblet .s_36 {
+    width: 36px;
+    height: 36px;
+}
+
 .goblet .blob {
     overflow: auto;
 }

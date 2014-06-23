@@ -15,7 +15,7 @@ See the LICENSE file for licensing details
 </div>
 <div class="commit">
 <div class="commitmsg">
-<img class="gravatar" src="{{ commit.author.email|gravatar(36) }}" />
+<img class="gravatar s_36" src="{{ commit.author.email|gravatar(36) }}" />
 <a href="{{ url_for('commit', repo=repo.name, ref=commit.hex) }}">{{ commit.message|shortmsg }}</a>
 {{ commit.message|longmsg }}
 <div class="commitdata">
