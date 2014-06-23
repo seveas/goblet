@@ -19,6 +19,8 @@ import stat
 
 class Defaults:
     REPO_ROOT      = git_checkout and os.path.dirname(git_checkout) or os.getcwd()
+    DAVATAR_SERVER = None
+    DAVATAR_SERVER = 'http://davatar.seveas.net/avatar'
     MAX_SEARCH_DEPTH = 2
     CACHE_ROOT     = '/tmp/goblet-snapshots'
     USE_X_SENDFILE = False

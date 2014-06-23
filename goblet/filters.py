@@ -11,6 +11,7 @@ from goblet.encoding import decode as decode_
 import stat
 import time
 import re
+import urllib
 
 filters = {}
 def filter(name_or_func):
@@ -25,7 +26,10 @@ def filter(name_or_func):
 @filter('gravatar')
 @memoize
 def gravatar(email, size=21):
-    return 'http://www.gravatar.com/avatar/%s?s=%d&d=mm' % (hashlib.md5(email).hexdigest(), size)
+    default = 'mm'
+    if app.config['DAVATAR_SERVER'] and '@' in email:
+        default = urllib.quote('%s/%s/%d/%s/davatar.jpg' % (app.config['DAVATAR_SERVER'], email[email.find('@')+1:], size, default))
+    return 'http://www.gravatar.com/avatar/%s?s=%d&d=%s' % (hashlib.md5(email).hexdigest(), size, default)
 
 @filter
 def humantime(ctime):
