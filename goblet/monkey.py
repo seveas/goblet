@@ -190,7 +190,7 @@ class Repository(pygit2.Repository):
 
     def tree_lastchanged(self, commit, path):
         """Get a dict of {name: hex} for commits that last changed files in a directory"""
-        data = self.git('blame-tree', '--max-depth=1', commit.hex, '--', os.path.join('.', path)).stdout
+        data = self.git('blame-tree', '--max-depth=0', commit.hex, '--', os.path.join('.', path) + os.sep).stdout
         data = data.decode('utf-8').splitlines()
         if not data:
             raise ValueError("Empty blame-tree output")
